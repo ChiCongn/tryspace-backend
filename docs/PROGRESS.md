@@ -30,20 +30,20 @@
 
 ## 🛠️ PHASE 2 — Core Infrastructure
 
-- [ ] P2-01 · `src/utils/ApiError.ts` — custom error class
-- [ ] P2-02 · `src/utils/response.ts` — success/error response helpers
-- [ ] P2-03 · `src/utils/jwt.ts` — sign/verify access + refresh token
-- [ ] P2-04 · `src/utils/password.ts` — hash + compare bcrypt
-- [ ] P2-05 · `src/utils/pagination.ts` — parse & build pagination meta
-- [ ] P2-06 · `src/utils/slugify.ts` — generate slug từ tên
-- [ ] P2-07 · `src/utils/orderNumber.ts` — generate order number `TS-YYYYMMDD-XXXX`
-- [ ] P2-08 · `src/middleware/errorHandler.ts` — global error handler
-- [ ] P2-09 · `src/middleware/authenticate.ts` — JWT verify middleware
-- [ ] P2-10 · `src/middleware/requireAdmin.ts` — role check middleware
-- [ ] P2-11 · `src/middleware/validate.ts` — Zod validation middleware
-- [ ] P2-12 · `src/middleware/rateLimiter.ts` — per-route rate limiters
+- [x] P2-01 · `src/utils/ApiError.ts` — custom error class — done 2026-05-08
+- [x] P2-02 · `src/utils/response.ts` — success/error response helpers — done 2026-05-08
+- [x] P2-03 · `src/utils/jwt.ts` — sign/verify access + refresh token — done 2026-05-08
+- [x] P2-04 · `src/utils/password.ts` — hash + compare bcrypt — done 2026-05-08
+- [x] P2-05 · `src/utils/pagination.ts` — parse & build pagination meta — done 2026-05-08
+- [x] P2-06 · `src/utils/slugify.ts` — generate slug từ tên — done 2026-05-08
+- [x] P2-07 · `src/utils/orderNumber.ts` — generate order number `TS-YYYYMMDD-XXXX` — done 2026-05-08
+- [x] P2-08 · `src/middleware/errorHandler.ts` — global error handler — done 2026-05-08
+- [x] P2-09 · `src/middleware/authenticate.ts` — JWT verify middleware — done 2026-05-08
+- [x] P2-10 · `src/middleware/requireAdmin.ts` — role check middleware — done 2026-05-08
+- [x] P2-11 · `src/middleware/validate.ts` — Zod validation middleware — done 2026-05-08
+- [x] P2-12 · `src/middleware/rateLimiter.ts` — per-route rate limiters — done 2026-05-08
 - [ ] P2-13 · `src/schemas/` — Zod schemas cho mỗi module
-- [ ] P2-14 · `src/routes/index.ts` — router tổng hợp
+- [x] P2-14 · `src/routes/index.ts` — router tổng hợp — done 2026-05-08
 
 ---
 
@@ -194,7 +194,7 @@
 |-------|-------|------|---|
 | P0 Setup | 10 | 9 | 90% |
 | P1 Database | 8 | 8 | 100% |
-| P2 Core | 14 | 0 | 0% |
+| P2 Core | 14 | 13 | 93% |
 | P3 Auth | 7 | 0 | 0% |
 | P4 Users | 5 | 0 | 0% |
 | P5 Categories | 6 | 0 | 0% |
@@ -207,7 +207,7 @@
 | P12 Search | 3 | 0 | 0% |
 | P13 Upload | 4 | 0 | 0% |
 | P14 Deploy | 8 | 0 | 0% |
-| **TOTAL** | **113** | **17** | **15%** |
+| **TOTAL** | **113** | **30** | **27%** |
 
 ---
 
@@ -220,6 +220,7 @@
 - `.gitignore` currently ignores `docs/`, so the progress/spec/prompt files are ignored by Git unless force-added or the ignore rule is changed.
 - 2026-05-08 Phase 0 setup: Created Node.js + Express + TypeScript scaffold, installed npm dependencies, and verified `npm run build` passes. ESLint + Prettier remain missing because they were not included in the Phase 0 setup prompt.
 - 2026-05-08 Phase 1 database: Created exact Prisma schema, initial migration, raw index migration, Prisma singleton, and seed data. Local PostgreSQL runs on host port `5433` because `5432` was already in use.
+- 2026-05-08 Phase 2 core: Created utilities, auth/admin/validation/rate-limit middleware, global error handler, Express request typing, and stub module routers. `src/schemas/` remains missing; module-specific Zod schemas should be added with module implementations.
 
 ---
 
