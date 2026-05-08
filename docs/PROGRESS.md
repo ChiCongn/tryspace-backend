@@ -82,14 +82,14 @@
 
 ## 📦 PHASE 6 — Module Products
 
-- [ ] P6-01 · `GET /products` — list với search + filter + pagination
-- [ ] P6-02 · `GET /products` — full-text search (PostgreSQL tsvector)
-- [ ] P6-03 · `GET /products/:idOrSlug` — by id hoặc slug
-- [ ] P6-04 · `GET /products/:id/related` — cùng category, sort by rating
-- [ ] P6-05 · `POST /admin/products` — tạo với variants + images
-- [ ] P6-06 · `PATCH /admin/products/:id` — update kể cả variants (replace)
-- [ ] P6-07 · `DELETE /admin/products/:id` — soft delete (isActive=false)
-- [ ] **TEST** · Tất cả product endpoints + search/filter
+- [x] P6-01 · `GET /products` — list với search + filter + pagination — done 2026-05-08
+- [x] P6-02 · `GET /products` — full-text search (PostgreSQL tsvector) — done 2026-05-08
+- [x] P6-03 · `GET /products/:idOrSlug` — by id hoặc slug — done 2026-05-08
+- [x] P6-04 · `GET /products/:id/related` — cùng category, sort by rating — done 2026-05-08
+- [x] P6-05 · `POST /admin/products` — tạo với variants + images — done 2026-05-08
+- [x] P6-06 · `PATCH /admin/products/:id` — update kể cả variants (replace) — done 2026-05-08
+- [x] P6-07 · `DELETE /admin/products/:id` — soft delete (isActive=false) — done 2026-05-08
+- [x] **TEST** · Tất cả product endpoints + search/filter — done 2026-05-08 via manual curl API tests
 
 ---
 
@@ -198,7 +198,7 @@
 | P3 Auth | 7 | 7 | 100% |
 | P4 Users | 5 | 5 | 100% |
 | P5 Categories | 6 | 6 | 100% |
-| P6 Products | 8 | 0 | 0% |
+| P6 Products | 8 | 8 | 100% |
 | P7 Reviews | 11 | 0 | 0% |
 | P8 Cart | 6 | 0 | 0% |
 | P9 Orders | 9 | 0 | 0% |
@@ -207,7 +207,7 @@
 | P12 Search | 3 | 0 | 0% |
 | P13 Upload | 4 | 0 | 0% |
 | P14 Deploy | 8 | 0 | 0% |
-| **TOTAL** | **113** | **48** | **42%** |
+| **TOTAL** | **113** | **56** | **50%** |
 
 ---
 
@@ -220,10 +220,11 @@
 - `.gitignore` currently ignores `docs/`, so the progress/spec/prompt files are ignored by Git unless force-added or the ignore rule is changed.
 - 2026-05-08 Phase 0 setup: Created Node.js + Express + TypeScript scaffold, installed npm dependencies, and verified `npm run build` passes. ESLint + Prettier remain missing because they were not included in the Phase 0 setup prompt.
 - 2026-05-08 Phase 1 database: Created exact Prisma schema, initial migration, raw index migration, Prisma singleton, and seed data. Local PostgreSQL runs on host port `5433` because `5432` was already in use.
-- 2026-05-08 Phase 2 core: Created utilities, auth/admin/validation/rate-limit middleware, global error handler, Express request typing, and stub module routers. Auth, user, and category schemas exist so far; remaining module-specific Zod schemas should be added with their module implementations.
+- 2026-05-08 Phase 2 core: Created utilities, auth/admin/validation/rate-limit middleware, global error handler, Express request typing, and stub module routers. Auth, user, category, and product schemas exist so far; remaining module-specific Zod schemas should be added with their module implementations.
 - 2026-05-08 Phase 3 auth: Implemented register, login with lockout, refresh-token rotation, logout, current-user stats, and change-password token invalidation. Verified with manual curl API tests.
 - 2026-05-08 Phase 4 users: Implemented profile update, public profile, admin user listing, and admin activate/deactivate safeguards. Verified with manual curl API tests.
 - 2026-05-08 Phase 5 categories: Implemented public category reads with active product counts and admin category create/update/delete with unique slug generation and active-product delete protection. Verified with manual curl API tests.
+- 2026-05-08 Phase 6 products: Implemented product list raw SQL filtering/search, product detail, related products, admin create/update with variant replacement, and soft delete. Verified with manual curl API tests.
 
 ---
 
