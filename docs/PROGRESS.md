@@ -49,13 +49,13 @@
 
 ## 🔐 PHASE 3 — Module Auth
 
-- [ ] P3-01 · `POST /auth/register` — tạo user, hash password, trả JWT
-- [ ] P3-02 · `POST /auth/login` — verify, failedAttempts, lock logic
-- [ ] P3-03 · `POST /auth/refresh` — token rotation từ httpOnly cookie
-- [ ] P3-04 · `POST /auth/logout` — revoke refresh token, clear cookie
-- [ ] P3-05 · `GET /auth/me` — profile + stats
-- [ ] P3-06 · `PATCH /auth/change-password` — verify old, invalidate all tokens
-- [ ] **TEST** · Tất cả auth endpoints qua Thunder Client / Postman
+- [x] P3-01 · `POST /auth/register` — tạo user, hash password, trả JWT — done 2026-05-08
+- [x] P3-02 · `POST /auth/login` — verify, failedAttempts, lock logic — done 2026-05-08
+- [x] P3-03 · `POST /auth/refresh` — token rotation từ httpOnly cookie — done 2026-05-08
+- [x] P3-04 · `POST /auth/logout` — revoke refresh token, clear cookie — done 2026-05-08
+- [x] P3-05 · `GET /auth/me` — profile + stats — done 2026-05-08
+- [x] P3-06 · `PATCH /auth/change-password` — verify old, invalidate all tokens — done 2026-05-08
+- [x] **TEST** · Tất cả auth endpoints qua Thunder Client / Postman — done 2026-05-08 via manual curl API tests
 
 ---
 
@@ -195,7 +195,7 @@
 | P0 Setup | 10 | 9 | 90% |
 | P1 Database | 8 | 8 | 100% |
 | P2 Core | 14 | 13 | 93% |
-| P3 Auth | 7 | 0 | 0% |
+| P3 Auth | 7 | 7 | 100% |
 | P4 Users | 5 | 0 | 0% |
 | P5 Categories | 6 | 0 | 0% |
 | P6 Products | 8 | 0 | 0% |
@@ -207,7 +207,7 @@
 | P12 Search | 3 | 0 | 0% |
 | P13 Upload | 4 | 0 | 0% |
 | P14 Deploy | 8 | 0 | 0% |
-| **TOTAL** | **113** | **30** | **27%** |
+| **TOTAL** | **113** | **37** | **33%** |
 
 ---
 
@@ -220,7 +220,8 @@
 - `.gitignore` currently ignores `docs/`, so the progress/spec/prompt files are ignored by Git unless force-added or the ignore rule is changed.
 - 2026-05-08 Phase 0 setup: Created Node.js + Express + TypeScript scaffold, installed npm dependencies, and verified `npm run build` passes. ESLint + Prettier remain missing because they were not included in the Phase 0 setup prompt.
 - 2026-05-08 Phase 1 database: Created exact Prisma schema, initial migration, raw index migration, Prisma singleton, and seed data. Local PostgreSQL runs on host port `5433` because `5432` was already in use.
-- 2026-05-08 Phase 2 core: Created utilities, auth/admin/validation/rate-limit middleware, global error handler, Express request typing, and stub module routers. `src/schemas/` remains missing; module-specific Zod schemas should be added with module implementations.
+- 2026-05-08 Phase 2 core: Created utilities, auth/admin/validation/rate-limit middleware, global error handler, Express request typing, and stub module routers. Only the auth schema exists so far; remaining module-specific Zod schemas should be added with their module implementations.
+- 2026-05-08 Phase 3 auth: Implemented register, login with lockout, refresh-token rotation, logout, current-user stats, and change-password token invalidation. Verified with manual curl API tests; remaining modules still use stub routers.
 
 ---
 
