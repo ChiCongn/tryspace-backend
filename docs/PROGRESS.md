@@ -61,22 +61,22 @@
 
 ## 👤 PHASE 4 — Module Users
 
-- [ ] P4-01 · `PATCH /users/me` — update displayName, avatarUrl
-- [ ] P4-02 · `GET /users/:userId` — public profile
-- [ ] P4-03 · `GET /admin/users` — list + filter + pagination
-- [ ] P4-04 · `PATCH /admin/users/:userId/status` — activate/deactivate
-- [ ] **TEST** · Tất cả user endpoints
+- [x] P4-01 · `PATCH /users/me` — update displayName, avatarUrl — done 2026-05-08
+- [x] P4-02 · `GET /users/:userId` — public profile — done 2026-05-08
+- [x] P4-03 · `GET /admin/users` — list + filter + pagination — done 2026-05-08
+- [x] P4-04 · `PATCH /admin/users/:userId/status` — activate/deactivate — done 2026-05-08
+- [x] **TEST** · Tất cả user endpoints — done 2026-05-08 via manual curl API tests
 
 ---
 
 ## 📂 PHASE 5 — Module Categories
 
-- [ ] P5-01 · `GET /categories` — list với productCount
-- [ ] P5-02 · `GET /categories/:slug` — single category
-- [ ] P5-03 · `POST /admin/categories` — tạo, auto-generate slug
-- [ ] P5-04 · `PATCH /admin/categories/:id` — cập nhật
-- [ ] P5-05 · `DELETE /admin/categories/:id` — check còn product không
-- [ ] **TEST** · Tất cả category endpoints
+- [x] P5-01 · `GET /categories` — list với productCount — done 2026-05-08
+- [x] P5-02 · `GET /categories/:slug` — single category — done 2026-05-08
+- [x] P5-03 · `POST /admin/categories` — tạo, auto-generate slug — done 2026-05-08
+- [x] P5-04 · `PATCH /admin/categories/:id` — cập nhật — done 2026-05-08
+- [x] P5-05 · `DELETE /admin/categories/:id` — check còn product không — done 2026-05-08
+- [x] **TEST** · Tất cả category endpoints — done 2026-05-08 via manual curl API tests
 
 ---
 
@@ -196,8 +196,8 @@
 | P1 Database | 8 | 8 | 100% |
 | P2 Core | 14 | 13 | 93% |
 | P3 Auth | 7 | 7 | 100% |
-| P4 Users | 5 | 0 | 0% |
-| P5 Categories | 6 | 0 | 0% |
+| P4 Users | 5 | 5 | 100% |
+| P5 Categories | 6 | 6 | 100% |
 | P6 Products | 8 | 0 | 0% |
 | P7 Reviews | 11 | 0 | 0% |
 | P8 Cart | 6 | 0 | 0% |
@@ -207,7 +207,7 @@
 | P12 Search | 3 | 0 | 0% |
 | P13 Upload | 4 | 0 | 0% |
 | P14 Deploy | 8 | 0 | 0% |
-| **TOTAL** | **113** | **37** | **33%** |
+| **TOTAL** | **113** | **48** | **42%** |
 
 ---
 
@@ -220,8 +220,10 @@
 - `.gitignore` currently ignores `docs/`, so the progress/spec/prompt files are ignored by Git unless force-added or the ignore rule is changed.
 - 2026-05-08 Phase 0 setup: Created Node.js + Express + TypeScript scaffold, installed npm dependencies, and verified `npm run build` passes. ESLint + Prettier remain missing because they were not included in the Phase 0 setup prompt.
 - 2026-05-08 Phase 1 database: Created exact Prisma schema, initial migration, raw index migration, Prisma singleton, and seed data. Local PostgreSQL runs on host port `5433` because `5432` was already in use.
-- 2026-05-08 Phase 2 core: Created utilities, auth/admin/validation/rate-limit middleware, global error handler, Express request typing, and stub module routers. Only the auth schema exists so far; remaining module-specific Zod schemas should be added with their module implementations.
-- 2026-05-08 Phase 3 auth: Implemented register, login with lockout, refresh-token rotation, logout, current-user stats, and change-password token invalidation. Verified with manual curl API tests; remaining modules still use stub routers.
+- 2026-05-08 Phase 2 core: Created utilities, auth/admin/validation/rate-limit middleware, global error handler, Express request typing, and stub module routers. Auth, user, and category schemas exist so far; remaining module-specific Zod schemas should be added with their module implementations.
+- 2026-05-08 Phase 3 auth: Implemented register, login with lockout, refresh-token rotation, logout, current-user stats, and change-password token invalidation. Verified with manual curl API tests.
+- 2026-05-08 Phase 4 users: Implemented profile update, public profile, admin user listing, and admin activate/deactivate safeguards. Verified with manual curl API tests.
+- 2026-05-08 Phase 5 categories: Implemented public category reads with active product counts and admin category create/update/delete with unique slug generation and active-product delete protection. Verified with manual curl API tests.
 
 ---
 
