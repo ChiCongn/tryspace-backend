@@ -6,6 +6,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 
 import { errorHandler } from "./middleware/errorHandler";
+import { defaultLimiter } from "./middleware/rateLimiter";
 import apiRouter from "./routes";
 
 const app = express();
@@ -17,8 +18,10 @@ app.use(cors({ origin: frontendUrl, credentials: true }));
 app.use(helmet());
 app.use(morgan(isProduction ? "combined" : "dev"));
 app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(compression());
+app.use(defaultLimiter);
 
 app.use("/api/v1", apiRouter);
 
