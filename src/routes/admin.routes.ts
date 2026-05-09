@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import * as categoryController from "../controllers/category.controller";
+import * as orderController from "../controllers/order.controller";
 import * as productController from "../controllers/product.controller";
 import * as reviewController from "../controllers/review.controller";
 import * as userController from "../controllers/user.controller";
@@ -9,6 +10,7 @@ import { adminLimiter } from "../middleware/rateLimiter";
 import { requireAdmin } from "../middleware/requireAdmin";
 import { validate } from "../middleware/validate";
 import { createCategorySchema, updateCategorySchema } from "../schemas/category.schema";
+import { updateOrderStatusSchema } from "../schemas/order.schema";
 import { createProductSchema, updateProductSchema } from "../schemas/product.schema";
 import { adminReplySchema, updateReviewStatusSchema } from "../schemas/review.schema";
 import { updateUserStatusSchema } from "../schemas/user.schema";
@@ -20,6 +22,9 @@ adminRouter.use(authenticate, requireAdmin, adminLimiter);
 
 adminRouter.get("/users", asyncHandler(userController.listUsers));
 adminRouter.patch("/users/:userId/status", validate(updateUserStatusSchema), asyncHandler(userController.updateUserStatus));
+
+adminRouter.get("/orders", asyncHandler(orderController.listAdminOrders));
+adminRouter.patch("/orders/:id/status", validate(updateOrderStatusSchema), asyncHandler(orderController.updateOrderStatus));
 
 adminRouter.post("/categories", validate(createCategorySchema), asyncHandler(categoryController.createCategory));
 adminRouter.patch("/categories/:id", validate(updateCategorySchema), asyncHandler(categoryController.updateCategory));

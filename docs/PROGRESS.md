@@ -122,15 +122,15 @@
 
 ## 📋 PHASE 9 — Module Orders
 
-- [ ] P9-01 · `POST /orders` — checkout, snapshot giá, trừ stock, clear cart
-- [ ] P9-02 · `POST /orders` — MOCK payment tự set CONFIRMED + PAID
-- [ ] P9-03 · `GET /orders` — list của user hiện tại
-- [ ] P9-04 · `GET /orders/:id` — chi tiết đơn
-- [ ] P9-05 · `POST /orders/:id/cancel` — chỉ PENDING/CONFIRMED, cộng lại stock
-- [ ] P9-06 · `PATCH /admin/orders/:id/status` — cập nhật status + trigger DELIVERED
-- [ ] P9-07 · `GET /admin/orders` — list tất cả + filter
-- [ ] P9-08 · Trigger: khi status → DELIVERED, unlock review cho các items
-- [ ] **TEST** · Test full checkout flow, test cancel, test review unlock
+- [x] P9-01 · `POST /orders` — checkout, snapshot giá, trừ stock, clear cart — done 2026-05-09
+- [x] P9-02 · `POST /orders` — MOCK payment tự set CONFIRMED + PAID — done 2026-05-09
+- [x] P9-03 · `GET /orders` — list của user hiện tại — done 2026-05-09
+- [x] P9-04 · `GET /orders/:id` — chi tiết đơn — done 2026-05-09
+- [x] P9-05 · `POST /orders/:id/cancel` — chỉ PENDING/CONFIRMED, cộng lại stock — done 2026-05-09
+- [x] P9-06 · `PATCH /admin/orders/:id/status` — cập nhật status + trigger DELIVERED — done 2026-05-09
+- [x] P9-07 · `GET /admin/orders` — list tất cả + filter — done 2026-05-09
+- [x] P9-08 · Trigger: khi status → DELIVERED, unlock review cho các items — done 2026-05-09 via review eligibility query
+- [x] **TEST** · Test full checkout flow, test cancel, test review unlock — done 2026-05-09 via manual curl API tests
 
 ---
 
@@ -201,13 +201,13 @@
 | P6 Products | 8 | 8 | 100% |
 | P7 Reviews | 11 | 11 | 100% |
 | P8 Cart | 6 | 6 | 100% |
-| P9 Orders | 9 | 0 | 0% |
+| P9 Orders | 9 | 9 | 100% |
 | P10 Designs | 10 | 0 | 0% |
 | P11 Wishlist | 4 | 0 | 0% |
 | P12 Search | 3 | 0 | 0% |
 | P13 Upload | 4 | 0 | 0% |
 | P14 Deploy | 8 | 0 | 0% |
-| **TOTAL** | **113** | **73** | **65%** |
+| **TOTAL** | **113** | **82** | **73%** |
 
 ---
 
@@ -220,13 +220,14 @@
 - `.gitignore` currently ignores `docs/`, so the progress/spec/prompt files are ignored by Git unless force-added or the ignore rule is changed.
 - 2026-05-08 Phase 0 setup: Created Node.js + Express + TypeScript scaffold, installed npm dependencies, and verified `npm run build` passes. ESLint + Prettier remain missing because they were not included in the Phase 0 setup prompt.
 - 2026-05-08 Phase 1 database: Created exact Prisma schema, initial migration, raw index migration, Prisma singleton, and seed data. Local PostgreSQL runs on host port `5433` because `5432` was already in use.
-- 2026-05-08 Phase 2 core: Created utilities, auth/admin/validation/rate-limit middleware, global error handler, Express request typing, and stub module routers. Auth, user, category, product, review, and cart schemas exist so far; remaining module-specific Zod schemas should be added with their module implementations.
+- 2026-05-08 Phase 2 core: Created utilities, auth/admin/validation/rate-limit middleware, global error handler, Express request typing, and stub module routers. Auth, user, category, product, review, cart, and order schemas exist so far; remaining module-specific Zod schemas should be added with their module implementations.
 - 2026-05-08 Phase 3 auth: Implemented register, login with lockout, refresh-token rotation, logout, current-user stats, and change-password token invalidation. Verified with manual curl API tests.
 - 2026-05-08 Phase 4 users: Implemented profile update, public profile, admin user listing, and admin activate/deactivate safeguards. Verified with manual curl API tests.
 - 2026-05-08 Phase 5 categories: Implemented public category reads with active product counts and admin category create/update/delete with unique slug generation and active-product delete protection. Verified with manual curl API tests.
 - 2026-05-08 Phase 6 products: Implemented product list raw SQL filtering/search, product detail, related products, admin create/update with variant replacement, and soft delete. Verified with manual curl API tests.
 - 2026-05-09 Phase 7 reviews: Implemented purchased-only review creation, duplicate prevention, owner updates, admin deletion/moderation/replies, helpful votes, user review history, and approved-review rating recalculation. Verified with manual curl API tests.
 - 2026-05-09 Phase 8 cart: Implemented cart reads with summary, add/increment with explicit null-variant lookup, stock checks, ownership-checked item updates/deletes, and clear cart. Verified with manual curl API tests.
+- 2026-05-09 Phase 9 orders: Implemented atomic checkout, order listing/detail, cancellation with stock restore, admin listing, and admin status updates with deliveredAt handling. Verified with manual curl API tests.
 
 ---
 

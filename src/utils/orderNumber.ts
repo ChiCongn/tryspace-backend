@@ -1,3 +1,5 @@
+import type { Prisma } from "@prisma/client";
+
 import { prisma } from "../lib/prisma";
 
 function formatDatePart(date: Date): string {
@@ -8,7 +10,7 @@ function formatDatePart(date: Date): string {
   return `${year}${month}${day}`;
 }
 
-export async function generate(): Promise<string> {
+export async function generate(client: Prisma.TransactionClient = prisma): Promise<string> {
   const now = new Date();
   const startOfDay = new Date(now);
   startOfDay.setHours(0, 0, 0, 0);
@@ -16,7 +18,7 @@ export async function generate(): Promise<string> {
   const endOfDay = new Date(now);
   endOfDay.setHours(23, 59, 59, 999);
 
-  const count = await prisma.order.count({
+  const count = await client.order.count({
     where: {
       createdAt: {
         gte: startOfDay,
