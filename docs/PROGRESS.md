@@ -136,16 +136,16 @@
 
 ## 🎨 PHASE 10 — Module Designs
 
-- [ ] P10-01 · `GET /designs` — list của user
-- [ ] P10-02 · `POST /designs` — tạo, upload thumbnail base64 → Cloudinary
-- [ ] P10-03 · `GET /designs/:id` — owner only
-- [ ] P10-04 · `GET /designs/shared/:shareToken` — public, không cần auth
-- [ ] P10-05 · `PATCH /designs/:id` — update name/thumbnail/items (replace items)
-- [ ] P10-06 · `DELETE /designs/:id` — owner only
-- [ ] P10-07 · `POST /designs/shared/:shareToken/clone` — clone về account
-- [ ] P10-08 · `POST /designs/:id/add-all-to-cart` — add all to cart
-- [ ] P10-09 · Giới hạn 50 designs / user
-- [ ] **TEST** · Test share link public access, test clone
+- [x] P10-01 · `GET /designs` — list của user — done 2026-05-09
+- [x] P10-02 · `POST /designs` — tạo, upload thumbnail base64 → Cloudinary — done 2026-05-09
+- [x] P10-03 · `GET /designs/:id` — owner only — done 2026-05-09
+- [x] P10-04 · `GET /designs/shared/:shareToken` — public, không cần auth — done 2026-05-09
+- [x] P10-05 · `PATCH /designs/:id` — update name/thumbnail/items (replace items) — done 2026-05-09
+- [x] P10-06 · `DELETE /designs/:id` — owner only — done 2026-05-09
+- [x] P10-07 · `POST /designs/shared/:shareToken/clone` — clone về account — done 2026-05-09
+- [x] P10-08 · `POST /designs/:id/add-all-to-cart` — add all to cart — done 2026-05-09
+- [x] P10-09 · Giới hạn 50 designs / user — done 2026-05-09
+- [x] **TEST** · Test share link public access, test clone — done 2026-05-09 via manual curl API tests
 
 ---
 
@@ -202,12 +202,12 @@
 | P7 Reviews | 11 | 11 | 100% |
 | P8 Cart | 6 | 6 | 100% |
 | P9 Orders | 9 | 9 | 100% |
-| P10 Designs | 10 | 0 | 0% |
+| P10 Designs | 10 | 10 | 100% |
 | P11 Wishlist | 4 | 0 | 0% |
 | P12 Search | 3 | 0 | 0% |
 | P13 Upload | 4 | 0 | 0% |
 | P14 Deploy | 8 | 0 | 0% |
-| **TOTAL** | **113** | **82** | **73%** |
+| **TOTAL** | **113** | **92** | **81%** |
 
 ---
 
@@ -220,7 +220,7 @@
 - `.gitignore` currently ignores `docs/`, so the progress/spec/prompt files are ignored by Git unless force-added or the ignore rule is changed.
 - 2026-05-08 Phase 0 setup: Created Node.js + Express + TypeScript scaffold, installed npm dependencies, and verified `npm run build` passes. ESLint + Prettier remain missing because they were not included in the Phase 0 setup prompt.
 - 2026-05-08 Phase 1 database: Created exact Prisma schema, initial migration, raw index migration, Prisma singleton, and seed data. Local PostgreSQL runs on host port `5433` because `5432` was already in use.
-- 2026-05-08 Phase 2 core: Created utilities, auth/admin/validation/rate-limit middleware, global error handler, Express request typing, and stub module routers. Auth, user, category, product, review, cart, and order schemas exist so far; remaining module-specific Zod schemas should be added with their module implementations.
+- 2026-05-08 Phase 2 core: Created utilities, auth/admin/validation/rate-limit middleware, global error handler, Express request typing, and stub module routers. Auth, user, category, product, review, cart, order, and design schemas exist so far; remaining module-specific Zod schemas should be added with their module implementations.
 - 2026-05-08 Phase 3 auth: Implemented register, login with lockout, refresh-token rotation, logout, current-user stats, and change-password token invalidation. Verified with manual curl API tests.
 - 2026-05-08 Phase 4 users: Implemented profile update, public profile, admin user listing, and admin activate/deactivate safeguards. Verified with manual curl API tests.
 - 2026-05-08 Phase 5 categories: Implemented public category reads with active product counts and admin category create/update/delete with unique slug generation and active-product delete protection. Verified with manual curl API tests.
@@ -228,6 +228,7 @@
 - 2026-05-09 Phase 7 reviews: Implemented purchased-only review creation, duplicate prevention, owner updates, admin deletion/moderation/replies, helpful votes, user review history, and approved-review rating recalculation. Verified with manual curl API tests.
 - 2026-05-09 Phase 8 cart: Implemented cart reads with summary, add/increment with explicit null-variant lookup, stock checks, ownership-checked item updates/deletes, and clear cart. Verified with manual curl API tests.
 - 2026-05-09 Phase 9 orders: Implemented atomic checkout, order listing/detail, cancellation with stock restore, admin listing, and admin status updates with deliveredAt handling. Verified with manual curl API tests.
+- 2026-05-09 Phase 10 designs: Implemented design CRUD, resilient Cloudinary thumbnail upload, public shared views, cloning, item replacement, add-all-to-cart, and 50-design limit. Verified with manual curl API tests.
 
 ---
 
