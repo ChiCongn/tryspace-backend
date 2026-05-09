@@ -1,5 +1,19 @@
-import { createStubRouter } from "./stubRouter";
+import { Router } from "express";
 
-const cartRouter = createStubRouter("Cart");
+import * as cartController from "../controllers/cart.controller";
+import { authenticate } from "../middleware/authenticate";
+import { validate } from "../middleware/validate";
+import { addCartItemSchema, updateCartItemSchema } from "../schemas/cart.schema";
+import { asyncHandler } from "../utils/asyncHandler";
+
+const cartRouter = Router();
+
+cartRouter.use(authenticate);
+
+cartRouter.get("/", asyncHandler(cartController.getCart));
+cartRouter.post("/items", validate(addCartItemSchema), asyncHandler(cartController.addItem));
+cartRouter.patch("/items/:itemId", validate(updateCartItemSchema), asyncHandler(cartController.updateItem));
+cartRouter.delete("/items/:itemId", asyncHandler(cartController.deleteItem));
+cartRouter.delete("/", asyncHandler(cartController.clearCart));
 
 export default cartRouter;
