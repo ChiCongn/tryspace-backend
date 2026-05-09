@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import * as categoryController from "../controllers/category.controller";
 import * as productController from "../controllers/product.controller";
+import * as reviewController from "../controllers/review.controller";
 import * as userController from "../controllers/user.controller";
 import { authenticate } from "../middleware/authenticate";
 import { adminLimiter } from "../middleware/rateLimiter";
@@ -9,6 +10,7 @@ import { requireAdmin } from "../middleware/requireAdmin";
 import { validate } from "../middleware/validate";
 import { createCategorySchema, updateCategorySchema } from "../schemas/category.schema";
 import { createProductSchema, updateProductSchema } from "../schemas/product.schema";
+import { adminReplySchema, updateReviewStatusSchema } from "../schemas/review.schema";
 import { updateUserStatusSchema } from "../schemas/user.schema";
 import { asyncHandler } from "../utils/asyncHandler";
 
@@ -26,5 +28,7 @@ adminRouter.delete("/categories/:id", asyncHandler(categoryController.deleteCate
 adminRouter.post("/products", validate(createProductSchema), asyncHandler(productController.createProduct));
 adminRouter.patch("/products/:id", validate(updateProductSchema), asyncHandler(productController.updateProduct));
 adminRouter.delete("/products/:id", asyncHandler(productController.deleteProduct));
+adminRouter.post("/products/:productId/reviews/:reviewId/reply", validate(adminReplySchema), asyncHandler(reviewController.replyToReview));
+adminRouter.patch("/products/:productId/reviews/:reviewId/status", validate(updateReviewStatusSchema), asyncHandler(reviewController.updateReviewStatus));
 
 export default adminRouter;

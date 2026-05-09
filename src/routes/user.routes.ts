@@ -1,5 +1,6 @@
 import { Router } from "express";
 
+import * as reviewController from "../controllers/review.controller";
 import * as userController from "../controllers/user.controller";
 import { authenticate } from "../middleware/authenticate";
 import { validate } from "../middleware/validate";
@@ -10,6 +11,7 @@ const userRouter = Router();
 
 userRouter.get("/me", authenticate, asyncHandler(userController.me));
 userRouter.patch("/me", authenticate, validate(updateMeSchema), asyncHandler(userController.updateMe));
+userRouter.get("/me/reviews", authenticate, asyncHandler(reviewController.listMyReviews));
 userRouter.get("/:userId", asyncHandler(userController.getPublicProfile));
 
 export default userRouter;

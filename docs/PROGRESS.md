@@ -95,17 +95,17 @@
 
 ## ⭐ PHASE 7 — Module Reviews
 
-- [ ] P7-01 · `GET /products/:productId/reviews` — list + filter
-- [ ] P7-02 · `POST /products/:productId/reviews` — **check đã mua chưa**
-- [ ] P7-03 · `POST /products/:productId/reviews` — **check đã review chưa**
-- [ ] P7-04 · `PATCH /products/:productId/reviews/:reviewId` — owner only
-- [ ] P7-05 · `DELETE /products/:productId/reviews/:reviewId` — admin only
-- [ ] P7-06 · `POST .../reviews/:reviewId/helpful` — toggle vote
-- [ ] P7-07 · `POST /admin/.../reviews/:reviewId/reply` — admin reply
-- [ ] P7-08 · `PATCH /admin/.../reviews/:reviewId/status` — approve/reject
-- [ ] P7-09 · `GET /users/me/reviews` — my reviews
-- [ ] P7-10 · Trigger cập nhật `averageRating` + `totalReviews` sau mọi thao tác
-- [ ] **TEST** · Đặc biệt test business rule "chỉ người mua được review"
+- [x] P7-01 · `GET /products/:productId/reviews` — list + filter — done 2026-05-09
+- [x] P7-02 · `POST /products/:productId/reviews` — **check đã mua chưa** — done 2026-05-09
+- [x] P7-03 · `POST /products/:productId/reviews` — **check đã review chưa** — done 2026-05-09
+- [x] P7-04 · `PATCH /products/:productId/reviews/:reviewId` — owner only — done 2026-05-09
+- [x] P7-05 · `DELETE /products/:productId/reviews/:reviewId` — admin only — done 2026-05-09
+- [x] P7-06 · `POST .../reviews/:reviewId/helpful` — toggle vote — done 2026-05-09
+- [x] P7-07 · `POST /admin/.../reviews/:reviewId/reply` — admin reply — done 2026-05-09
+- [x] P7-08 · `PATCH /admin/.../reviews/:reviewId/status` — approve/reject — done 2026-05-09
+- [x] P7-09 · `GET /users/me/reviews` — my reviews — done 2026-05-09
+- [x] P7-10 · Trigger cập nhật `averageRating` + `totalReviews` sau mọi thao tác — done 2026-05-09
+- [x] **TEST** · Đặc biệt test business rule "chỉ người mua được review" — done 2026-05-09 via manual curl API tests
 
 ---
 
@@ -199,7 +199,7 @@
 | P4 Users | 5 | 5 | 100% |
 | P5 Categories | 6 | 6 | 100% |
 | P6 Products | 8 | 8 | 100% |
-| P7 Reviews | 11 | 0 | 0% |
+| P7 Reviews | 11 | 11 | 100% |
 | P8 Cart | 6 | 0 | 0% |
 | P9 Orders | 9 | 0 | 0% |
 | P10 Designs | 10 | 0 | 0% |
@@ -207,7 +207,7 @@
 | P12 Search | 3 | 0 | 0% |
 | P13 Upload | 4 | 0 | 0% |
 | P14 Deploy | 8 | 0 | 0% |
-| **TOTAL** | **113** | **56** | **50%** |
+| **TOTAL** | **113** | **67** | **59%** |
 
 ---
 
@@ -220,12 +220,13 @@
 - `.gitignore` currently ignores `docs/`, so the progress/spec/prompt files are ignored by Git unless force-added or the ignore rule is changed.
 - 2026-05-08 Phase 0 setup: Created Node.js + Express + TypeScript scaffold, installed npm dependencies, and verified `npm run build` passes. ESLint + Prettier remain missing because they were not included in the Phase 0 setup prompt.
 - 2026-05-08 Phase 1 database: Created exact Prisma schema, initial migration, raw index migration, Prisma singleton, and seed data. Local PostgreSQL runs on host port `5433` because `5432` was already in use.
-- 2026-05-08 Phase 2 core: Created utilities, auth/admin/validation/rate-limit middleware, global error handler, Express request typing, and stub module routers. Auth, user, category, and product schemas exist so far; remaining module-specific Zod schemas should be added with their module implementations.
+- 2026-05-08 Phase 2 core: Created utilities, auth/admin/validation/rate-limit middleware, global error handler, Express request typing, and stub module routers. Auth, user, category, product, and review schemas exist so far; remaining module-specific Zod schemas should be added with their module implementations.
 - 2026-05-08 Phase 3 auth: Implemented register, login with lockout, refresh-token rotation, logout, current-user stats, and change-password token invalidation. Verified with manual curl API tests.
 - 2026-05-08 Phase 4 users: Implemented profile update, public profile, admin user listing, and admin activate/deactivate safeguards. Verified with manual curl API tests.
 - 2026-05-08 Phase 5 categories: Implemented public category reads with active product counts and admin category create/update/delete with unique slug generation and active-product delete protection. Verified with manual curl API tests.
 - 2026-05-08 Phase 6 products: Implemented product list raw SQL filtering/search, product detail, related products, admin create/update with variant replacement, and soft delete. Verified with manual curl API tests.
+- 2026-05-09 Phase 7 reviews: Implemented purchased-only review creation, duplicate prevention, owner updates, admin deletion/moderation/replies, helpful votes, user review history, and approved-review rating recalculation. Verified with manual curl API tests.
 
 ---
 
-*Cập nhật lần cuối: 2026-05-08*
+*Cập nhật lần cuối: 2026-05-09*
