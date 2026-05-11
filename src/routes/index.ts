@@ -29,7 +29,9 @@ router.use("/admin", adminRouter);
 router.get("/health", (_req, res) => {
   res.json({
     status: "ok",
-    timestamp: new Date().toISOString()
+    uptime: process.uptime(),
+    timestamp: new Date(),
+    env: process.env.NODE_ENV
   });
 });
 

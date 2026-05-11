@@ -23,6 +23,15 @@ app.use(cookieParser());
 app.use(compression());
 app.use(defaultLimiter);
 
+app.get("/health", (_req, res) => {
+  res.json({
+    status: "ok",
+    uptime: process.uptime(),
+    timestamp: new Date(),
+    env: process.env.NODE_ENV
+  });
+});
+
 app.use("/api/v1", apiRouter);
 
 app.use((req, res) => {
