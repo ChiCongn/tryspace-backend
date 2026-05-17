@@ -1,7 +1,19 @@
 import rateLimit from "express-rate-limit";
 import type { Request, Response } from "express";
 
-function rateLimitHandler(_req: Request, res: Response): void {
+import { logger } from "../utils/logger";
+
+const rateLimitLogger = logger.child({ context: "rate limiter" });
+
+function rateLimitHandler(req: Request, res: Response): void {
+  rateLimitLogger.warn(`Rate limit exceeded for ${req.method} ${req.originalUrl}`, {
+    requestId: req.requestId,
+    method: req.method,
+    path: req.originalUrl,
+    ip: req.ip,
+    userId: req.user?.id
+  });
+
   res.status(429).json({
     success: false,
     error: {

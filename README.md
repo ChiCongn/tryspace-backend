@@ -52,6 +52,11 @@ The API runs locally at `http://localhost:3000`.
 | `PORT` | No | HTTP port. Defaults to `3000`. |
 | `NODE_ENV` | No | Runtime environment, for example `development` or `production`. |
 | `FRONTEND_URL` | Yes | Allowed CORS origin for the frontend. |
+| `LOG_LEVEL` | No | Minimum log level: `debug`, `info`, `warn`, `error`, or `silent`. Defaults to `info`. |
+| `LOG_FORMAT` | No | Log output format: `pretty` or `json`. Defaults to `json` in production and `pretty` otherwise. |
+| `SLOW_REQUEST_MS` | No | Request duration threshold for slow request warnings. Defaults to `1000`. |
+| `LOG_HEALTHCHECKS` | No | Set to `true` to include `/health` request logs. Defaults to `false`. |
+| `LOG_PRISMA_QUERIES` | No | Set to `true` with `LOG_LEVEL=debug` to log Prisma query text and duration. Defaults to `false`. |
 
 ## API Base URL
 
@@ -67,6 +72,12 @@ Health check:
 http://localhost:3000/health
 ```
 
+Local seed assets are served from:
+
+```text
+http://localhost:3000/assets
+```
+
 ## Available Scripts
 
 | Script | Description |
@@ -78,6 +89,8 @@ http://localhost:3000/health
 | `npm run db:migrate` | Run Prisma development migrations. |
 | `npm run db:seed` | Seed local database data. |
 | `npm run db:studio` | Open Prisma Studio. |
+
+`npm run db:seed` resets local data and creates 50+ products, 5 Gmail seed accounts using password `Tryspace@123`, delivered orders for 2 users, and sample reviews.
 
 ## Production
 

@@ -2,6 +2,7 @@ import type { UploadApiResponse } from "cloudinary";
 
 import { cloudinary } from "../lib/cloudinary";
 import { ApiError } from "../utils/ApiError";
+import { logger } from "../utils/logger";
 
 type ImagePurpose = "avatar" | "review" | "design" | "design-thumbnail";
 
@@ -12,6 +13,7 @@ const IMAGE_PURPOSES: Record<ImagePurpose, { folder: string; maxBytes: number }>
   design: { folder: "tryspace/designs", maxBytes: 5 * 1024 * 1024 },
   "design-thumbnail": { folder: "tryspace/designs", maxBytes: 5 * 1024 * 1024 }
 };
+const uploadLogger = logger.child({ context: "upload service" });
 
 function uploadBuffer(buffer: Buffer, options: Record<string, unknown>): Promise<UploadApiResponse> {
   return new Promise((resolve, reject) => {
@@ -65,6 +67,16 @@ export async function uploadImage(fileInput: Express.Multer.File | undefined, pu
     ...(purpose === "avatar" ? { transformation: [{ width: 400, height: 400, crop: "fill", gravity: "face" }] } : {})
   });
 
+  uploadLogger.info(`Uploaded image for ${purpose} to ${config.folder}`, {
+    purpose,
+    folder: config.folder,
+    publicId: result.public_id,
+    format: result.format,
+    width: result.width,
+    height: result.height,
+    bytes: result.bytes
+  });
+
   return {
     url: result.secure_url,
     publicId: result.public_id,
@@ -96,6 +108,12 @@ export async function uploadModel(fileInput: Express.Multer.File | undefined) {
   const result = await uploadBuffer(file.buffer, {
     folder: "tryspace/models",
     resource_type: "raw"
+  });
+
+  uploadLogger.info("Uploaded 3D model to tryspace/models", {
+    folder: "tryspace/models",
+    publicId: result.public_id,
+    bytes: result.bytes
   });
 
   return {

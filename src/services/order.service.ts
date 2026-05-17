@@ -8,11 +8,13 @@ import {
   type UpdateOrderStatusInput
 } from "../schemas/order.schema";
 import { ApiError } from "../utils/ApiError";
+import { logger } from "../utils/logger";
 import { generate as generateOrderNumber } from "../utils/orderNumber";
 import { buildPaginationMeta } from "../utils/pagination";
 
 const ORDER_DEFAULT_LIMIT = 12;
 const CANCELLABLE_STATUSES: OrderStatus[] = ["PENDING_PAYMENT", "CONFIRMED"];
+const orderLogger = logger.child({ context: "order service" });
 
 const orderInclude = {
   user: {
@@ -295,6 +297,17 @@ export async function createOrder(userId: string, input: CreateOrderInput) {
     return createdOrder;
   });
 
+  orderLogger.info(`Created order ${order.orderNumber} for user ${userId}; total=${order.total}; items=${order.items.length}`, {
+    orderId: order.id,
+    orderNumber: order.orderNumber,
+    userId,
+    status: order.status,
+    paymentStatus: order.paymentStatus,
+    paymentMethod: order.paymentMethod,
+    total: order.total,
+    itemCount: order.items.length
+  });
+
   return formatOrderDetail(order);
 }
 
@@ -376,6 +389,14 @@ export async function cancelOrder(orderId: string, userId: string) {
     });
   });
 
+  orderLogger.info(`Cancelled order ${order.orderNumber} for user ${userId}; restored ${order.items.length} items`, {
+    orderId: order.id,
+    orderNumber: order.orderNumber,
+    userId,
+    status: order.status,
+    itemCount: order.items.length
+  });
+
   return {
     id: order.id,
     status: order.status,
@@ -386,7 +407,7 @@ export async function cancelOrder(orderId: string, userId: string) {
 export async function updateOrderStatus(orderId: string, input: UpdateOrderStatusInput) {
   const existingOrder = await prisma.order.findUnique({
     where: { id: orderId },
-    select: { id: true }
+    select: { id: true, status: true }
   });
 
   if (!existingOrder) {
@@ -402,6 +423,14 @@ export async function updateOrderStatus(orderId: string, input: UpdateOrderStatu
       ...(input.note === undefined ? {} : { note: input.note })
     },
     include: orderInclude
+  });
+
+  orderLogger.info(`Updated order ${order.orderNumber} status from ${existingOrder.status} to ${order.status}`, {
+    orderId: order.id,
+    orderNumber: order.orderNumber,
+    previousStatus: existingOrder.status,
+    status: order.status,
+    trackingNumberSet: Boolean(order.trackingNumber)
   });
 
   return formatOrderDetail(order);

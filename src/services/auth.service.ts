@@ -5,10 +5,12 @@ import type { ChangePasswordInput, LoginInput, RegisterInput } from "../schemas/
 import { ApiError } from "../utils/ApiError";
 import { comparePassword, hashPassword } from "../utils/password";
 import { hashToken, signAccessToken, signRefreshToken } from "../utils/jwt";
+import { logger } from "../utils/logger";
 
 const LOCK_THRESHOLD = 5;
 const LOCK_DURATION_MS = 15 * 60 * 1000;
 const REFRESH_TOKEN_DEFAULT_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+const authLogger = logger.child({ context: "auth service" });
 
 interface AuthUser {
   id: string;
@@ -140,6 +142,11 @@ export async function register(input: RegisterInput): Promise<AuthResult> {
       };
     });
 
+    authLogger.info(`Registered user ${user.id} with role ${user.role}`, {
+      userId: user.id,
+      role: user.role
+    });
+
     return {
       accessToken: signAccessToken({ sub: user.id, role: user.role }),
       refreshToken,
@@ -168,11 +175,18 @@ export async function login(input: LoginInput): Promise<AuthResult> {
   }
 
   if (!user.isActive) {
+    authLogger.warn(`Login blocked for inactive user ${user.id}`, {
+      userId: user.id
+    });
     throw new ApiError(403, "ACCOUNT_INACTIVE", "Tài khoản đã bị vô hiệu hóa");
   }
 
   if (user.lockedUntil) {
     if (user.lockedUntil > new Date()) {
+      authLogger.warn(`Login blocked for locked user ${user.id} until ${user.lockedUntil.toISOString()}`, {
+        userId: user.id,
+        lockedUntil: user.lockedUntil
+      });
       throw accountLockedError(user.lockedUntil);
     }
 
@@ -199,6 +213,12 @@ export async function login(input: LoginInput): Promise<AuthResult> {
       }
     });
 
+    authLogger.warn(`Login failed for user ${user.id}; attempts=${failedLoginAttempts}; locked=${Boolean(lockedUntil)}`, {
+      userId: user.id,
+      failedLoginAttempts,
+      lockApplied: Boolean(lockedUntil)
+    });
+
     if (lockedUntil) {
       throw accountLockedError(lockedUntil);
     }
@@ -222,6 +242,11 @@ export async function login(input: LoginInput): Promise<AuthResult> {
       refreshToken: refresh.token,
       refreshTokenMaxAgeMs: refresh.maxAgeMs
     };
+  });
+
+  authLogger.info(`User ${updatedUser.id} logged in with role ${updatedUser.role}`, {
+    userId: updatedUser.id,
+    role: updatedUser.role
   });
 
   return {
@@ -261,6 +286,10 @@ export async function refresh(refreshToken: string | undefined): Promise<Refresh
     return createRefreshToken(storedToken.userId, tx);
   });
 
+  authLogger.info(`Rotated refresh token for user ${storedToken.userId}`, {
+    userId: storedToken.userId
+  });
+
   return {
     accessToken: signAccessToken({ sub: storedToken.user.id, role: storedToken.user.role }),
     refreshToken: rotated.token,
@@ -273,12 +302,19 @@ export async function logout(userId: string, refreshToken: string | undefined): 
     return;
   }
 
-  await prisma.refreshToken.deleteMany({
+  const result = await prisma.refreshToken.deleteMany({
     where: {
       userId,
       tokenHash: hashToken(refreshToken)
     }
   });
+
+  if (result.count > 0) {
+    authLogger.info(`User ${userId} logged out; revoked sessions=${result.count}`, {
+      userId,
+      revokedSessions: result.count
+    });
+  }
 }
 
 export async function getMe(userId: string): Promise<ProfileResult> {
@@ -338,6 +374,10 @@ export async function changePassword(userId: string, input: ChangePasswordInput)
     }),
     prisma.refreshToken.deleteMany({ where: { userId } })
   ]);
+
+  authLogger.info(`Changed password for user ${userId}`, {
+    userId
+  });
 
   return {
     message: "Mật khẩu đã được cập nhật. Vui lòng đăng nhập lại trên các thiết bị khác."
