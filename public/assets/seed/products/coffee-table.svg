@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480" role="img" aria-labelledby="title desc">
+  <title id="title">TrySpace local coffee table seed image</title>
+  <desc id="desc">A simple coffee table illustration used as local seed data.</desc>
+  <rect width="640" height="480" fill="#f5f1e9"/>
+  <ellipse cx="320" cy="238" rx="222" ry="82" fill="#d5b27c"/>
+  <ellipse cx="320" cy="220" rx="222" ry="82" fill="#e8c891"/>
+  <path d="M190 270h38l-28 110h-38zM412 270h38l28 110h-38z" fill="#76543c"/>
+  <path d="M196 210c72-36 174-46 272-8" fill="none" stroke="#b98b5a" stroke-width="12" stroke-linecap="round"/>
+  <text x="320" y="432" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#76543c">Coffee Table</text>
+</svg>

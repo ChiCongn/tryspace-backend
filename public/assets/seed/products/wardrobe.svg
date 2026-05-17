@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480" role="img" aria-labelledby="title desc">
+  <title id="title">TrySpace local wardrobe seed image</title>
+  <desc id="desc">A simple wardrobe illustration used as local seed data.</desc>
+  <rect width="640" height="480" fill="#f3f0ea"/>
+  <rect x="188" y="80" width="264" height="322" rx="20" fill="#aa8b65"/>
+  <rect x="210" y="106" width="104" height="268" rx="12" fill="#c8a77a"/>
+  <rect x="326" y="106" width="104" height="268" rx="12" fill="#c8a77a"/>
+  <circle cx="296" cy="246" r="8" fill="#6b5238"/>
+  <circle cx="344" cy="246" r="8" fill="#6b5238"/>
+  <rect x="226" y="126" width="72" height="80" rx="12" fill="#dfc89f"/>
+  <rect x="342" y="126" width="72" height="80" rx="12" fill="#dfc89f"/>
+  <text x="320" y="432" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#6b5238">Wardrobe</text>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480" role="img" aria-labelledby="title desc">
+  <title id="title">TrySpace local chair seed image</title>
+  <desc id="desc">A simple chair illustration used as local seed data.</desc>
+  <rect width="640" height="480" fill="#eef4f2"/>
+  <rect x="236" y="128" width="168" height="156" rx="28" fill="#7d9a8d"/>
+  <rect x="214" y="252" width="212" height="76" rx="22" fill="#9fb9aa"/>
+  <path d="M246 328h36l-22 88h-36zM358 328h36l22 88h-36z" fill="#5d4739"/>
+  <rect x="242" y="166" width="156" height="24" rx="12" fill="#dbe9e3"/>
+  <rect x="242" y="206" width="156" height="24" rx="12" fill="#dbe9e3"/>
+  <text x="320" y="432" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#3d5a4d">Chair</text>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480" role="img" aria-labelledby="title desc">
+  <title id="title">TrySpace local TV console seed image</title>
+  <desc id="desc">A simple TV console illustration used as local seed data.</desc>
+  <rect width="640" height="480" fill="#f0f2f3"/>
+  <rect x="154" y="154" width="332" height="146" rx="18" fill="#7c858b"/>
+  <rect x="178" y="178" width="122" height="42" rx="10" fill="#d9e2e6"/>
+  <rect x="340" y="178" width="122" height="42" rx="10" fill="#d9e2e6"/>
+  <rect x="178" y="240" width="284" height="36" rx="10" fill="#4f5a60"/>
+  <rect x="190" y="300" width="42" height="54" rx="8" fill="#59483f"/>
+  <rect x="408" y="300" width="42" height="54" rx="8" fill="#59483f"/>
+  <text x="320" y="432" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#4f5a60">TV Console</text>
+</svg>

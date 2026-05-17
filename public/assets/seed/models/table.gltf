@@ -1,0 +1,32 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "TrySpace seed assets"
+  },
+  "scene": 0,
+  "scenes": [{ "nodes": [0] }],
+  "nodes": [{ "mesh": 0, "name": "Seed table surface", "scale": [1.5, 0.2, 0.86] }],
+  "meshes": [
+    {
+      "primitives": [{ "attributes": { "POSITION": 0 }, "mode": 4 }]
+    }
+  ],
+  "buffers": [
+    {
+      "uri": "data:application/octet-stream;base64,AAAAvwAAAAAAAAC/AAAAPwAAAAAAAAC/AAAAPwAAAAAAAAA/AAAAvwAAAAAAAAC/AAAAPwAAAAAAAAA/AAAAvwAAAAAAAAA/",
+      "byteLength": 72
+    }
+  ],
+  "bufferViews": [{ "buffer": 0, "byteOffset": 0, "byteLength": 72, "target": 34962 }],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 6,
+      "type": "VEC3",
+      "min": [-0.5, 0, -0.5],
+      "max": [0.5, 0, 0.5]
+    }
+  ]
+}

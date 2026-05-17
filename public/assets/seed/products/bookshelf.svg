@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480" role="img" aria-labelledby="title desc">
+  <title id="title">TrySpace local bookshelf seed image</title>
+  <desc id="desc">A simple bookshelf illustration used as local seed data.</desc>
+  <rect width="640" height="480" fill="#f2f4ed"/>
+  <rect x="202" y="82" width="236" height="314" rx="18" fill="#7a5b45"/>
+  <rect x="226" y="112" width="188" height="44" rx="6" fill="#ead8b8"/>
+  <rect x="226" y="180" width="188" height="44" rx="6" fill="#ead8b8"/>
+  <rect x="226" y="248" width="188" height="44" rx="6" fill="#ead8b8"/>
+  <rect x="226" y="316" width="188" height="44" rx="6" fill="#ead8b8"/>
+  <rect x="244" y="126" width="24" height="30" fill="#5f8f88"/>
+  <rect x="280" y="118" width="20" height="38" fill="#c06048"/>
+  <rect x="328" y="190" width="58" height="34" fill="#8ba85e"/>
+  <rect x="250" y="258" width="48" height="34" fill="#caa35f"/>
+  <text x="320" y="432" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#5d4433">Bookshelf</text>
+</svg>

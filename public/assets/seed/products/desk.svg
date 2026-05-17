@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480" role="img" aria-labelledby="title desc">
+  <title id="title">TrySpace local desk seed image</title>
+  <desc id="desc">A simple work desk illustration used as local seed data.</desc>
+  <rect width="640" height="480" fill="#eff3f8"/>
+  <rect x="126" y="176" width="388" height="52" rx="12" fill="#cfa66e"/>
+  <rect x="150" y="228" width="62" height="152" rx="10" fill="#53606d"/>
+  <rect x="428" y="228" width="62" height="152" rx="10" fill="#53606d"/>
+  <rect x="236" y="98" width="168" height="78" rx="12" fill="#6d7f91"/>
+  <rect x="256" y="118" width="128" height="38" rx="8" fill="#dce6ee"/>
+  <rect x="276" y="238" width="88" height="22" rx="8" fill="#e6c58e"/>
+  <text x="320" y="432" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#53606d">Desk</text>
+</svg>
