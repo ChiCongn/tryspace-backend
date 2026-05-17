@@ -370,6 +370,31 @@ export async function cloneSharedDesign(shareToken: string, userId: string) {
   return formatDesignDetail(design);
 }
 
+export async function cloneDesign(designId: string, userId: string, role?: string) {
+  const sourceDesign = await findOwnedDesign(designId, userId, role);
+
+  const design = await prisma.design.create({
+    data: {
+      userId,
+      name: `${sourceDesign.name} (copy)`,
+      thumbnailUrl: sourceDesign.thumbnailUrl,
+      shareToken: randomUUID(),
+      clonedFrom: sourceDesign.shareToken,
+      items: {
+        create: sourceDesign.items.map((item) => ({
+          productId: item.productId,
+          variantId: item.variantId,
+          transform: item.transform as Prisma.InputJsonValue,
+          sortOrder: item.sortOrder
+        }))
+      }
+    },
+    include: designInclude
+  });
+
+  return formatDesignDetail(design);
+}
+
 export async function addAllToCart(designId: string, userId: string, role?: string) {
   const design = await findOwnedDesign(designId, userId, role);
   const skippedItems: Array<{ productId: string; name: string; reason: string }> = [];

@@ -242,3 +242,28 @@ export async function clearCart(userId: string) {
 
   return getCart(userId);
 }
+
+export async function syncCart(userId: string, items: any[]) {
+  // Clear existing cart items
+  await prisma.cartItem.deleteMany({ where: { userId } });
+
+  // Add new items from sync request
+  for (const item of items) {
+    const product = await getActiveProduct(item.productId);
+    const variant = await getVariantForProduct(item.productId, item.variantId);
+    const variantId = item.variantId ?? null;
+
+    checkStock(variant?.stockQuantity ?? product.stockQuantity, item.quantity);
+
+    await prisma.cartItem.create({
+      data: {
+        userId,
+        productId: item.productId,
+        variantId,
+        quantity: item.quantity
+      }
+    });
+  }
+
+  return getCart(userId);
+}

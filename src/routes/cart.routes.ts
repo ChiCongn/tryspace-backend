@@ -11,6 +11,7 @@ const cartRouter = Router();
 cartRouter.use(authenticate);
 
 cartRouter.get("/", asyncHandler(cartController.getCart));
+cartRouter.put("/", asyncHandler(cartController.syncCart));
 cartRouter.post("/items", validate(addCartItemSchema), asyncHandler(cartController.addItem));
 cartRouter.patch("/items/:itemId", validate(updateCartItemSchema), asyncHandler(cartController.updateItem));
 cartRouter.delete("/items/:itemId", asyncHandler(cartController.deleteItem));

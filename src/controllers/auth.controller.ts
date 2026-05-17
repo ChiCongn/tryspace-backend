@@ -43,7 +43,10 @@ export async function register(req: Request, res: Response): Promise<void> {
   sendSuccess(
     res,
     {
-      accessToken: result.accessToken,
+      tokens: {
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken
+      },
       user: {
         id: result.user.id,
         email: result.user.email,
@@ -62,7 +65,10 @@ export async function login(req: Request, res: Response): Promise<void> {
 
   setRefreshCookie(res, result.refreshToken, result.refreshTokenMaxAgeMs);
   sendSuccess(res, {
-    accessToken: result.accessToken,
+    tokens: {
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken
+    },
     user: {
       id: result.user.id,
       email: result.user.email,

@@ -42,3 +42,9 @@ export async function clearCart(req: Request, res: Response): Promise<void> {
 
   sendSuccess(res, cart);
 }
+
+export async function syncCart(req: Request, res: Response): Promise<void> {
+  const cart = await cartService.syncCart(requireUserId(req), req.body.items || []);
+
+  sendSuccess(res, cart);
+}

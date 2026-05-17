@@ -64,6 +64,13 @@ export async function cloneSharedDesign(req: Request, res: Response): Promise<vo
   sendSuccess(res, design, 201);
 }
 
+export async function cloneDesign(req: Request, res: Response): Promise<void> {
+  const user = requireUser(req);
+  const design = await designService.cloneDesign(req.params.id, user.id, user.role);
+
+  sendSuccess(res, design, 201);
+}
+
 export async function addAllToCart(req: Request, res: Response): Promise<void> {
   const user = requireUser(req);
   const result = await designService.addAllToCart(req.params.id, user.id, user.role);
