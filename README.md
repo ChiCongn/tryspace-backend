@@ -16,20 +16,36 @@ Node.js, Express, TypeScript, Prisma, and PostgreSQL API for TrySpace.
    cp .env.example .env
    ```
 
-3. Start local PostgreSQL:
+3. Start PostgreSQL installed on your laptop:
 
    ```bash
-   docker compose up -d
+   sudo systemctl start postgresql
    ```
 
-4. Run migrations and seed data:
+4. Create a local PostgreSQL user and database once:
+
+   ```bash
+   sudo -u postgres psql -c "CREATE USER tryspace WITH PASSWORD 'tryspace';"
+   sudo -u postgres psql -c "CREATE DATABASE tryspace OWNER tryspace;"
+   ```
+
+   If the `tryspace` user already exists but has a different password, reset it:
+
+   ```bash
+   sudo -u postgres psql -c "ALTER USER tryspace WITH PASSWORD 'tryspace';"
+   ```
+
+   If your laptop PostgreSQL uses a different username, password, database, or
+   port, update `DATABASE_URL` in `.env` instead.
+
+5. Run migrations and seed data:
 
    ```bash
    npm run db:migrate
    npm run db:seed
    ```
 
-5. Start the development server:
+6. Start the development server:
 
    ```bash
    npm run dev
@@ -90,7 +106,7 @@ http://localhost:3000/assets
 | `npm run db:seed` | Seed local database data. |
 | `npm run db:studio` | Open Prisma Studio. |
 
-`npm run db:seed` resets local data and creates 50+ products, 5 Gmail seed accounts using password `Tryspace@123`, delivered orders for 2 users, and sample reviews.
+`npm run db:seed` resets local data and creates 50+ products, 5 Gmail seed accounts using password `Tryspace@123`, delivered orders for 2 users, and sample reviews. Product media uses a mix of local demo assets and online Unsplash/three.js assets; see `SEED_ASSET_SOURCES.md`.
 
 ## Production
 

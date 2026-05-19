@@ -25,6 +25,18 @@ export async function toggleWishlist(req: Request, res: Response): Promise<void>
   sendSuccess(res, result);
 }
 
+export async function addToWishlist(req: Request, res: Response): Promise<void> {
+  const result = await wishlistService.addToWishlist(requireUserId(req), req.body as ToggleWishlistInput);
+
+  sendSuccess(res, result);
+}
+
+export async function removeFromWishlist(req: Request, res: Response): Promise<void> {
+  const result = await wishlistService.removeFromWishlist(requireUserId(req), req.params.productId);
+
+  sendSuccess(res, result);
+}
+
 export async function checkWishlist(req: Request, res: Response): Promise<void> {
   const result = await wishlistService.checkWishlist(requireUserId(req), req.params.productId);
 

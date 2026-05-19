@@ -4,8 +4,9 @@ import app from "./app";
 import { logger } from "./utils/logger";
 
 const port = Number(process.env.PORT) || 3000;
-const serverLogger = logger.child({ context: "server" });
 const nodeEnv = process.env.NODE_ENV ?? "development";
+const host = process.env.HOST || (nodeEnv === "production" ? undefined : "0.0.0.0");
+const serverLogger = logger.child({ context: "server" });
 
 function errorSummary(error: unknown): string {
   if (error instanceof Error) {
@@ -15,15 +16,19 @@ function errorSummary(error: unknown): string {
   return String(error);
 }
 
-const server = app.listen(port, () => {
-  serverLogger.info(`API server started on port ${port} (${nodeEnv})`, {
+const server = host ? app.listen(port, host, onListening) : app.listen(port, onListening);
+
+function onListening(): void {
+  serverLogger.info(`API server started on ${host ?? "default host"}:${port} (${nodeEnv})`, {
+    host,
     port,
     nodeEnv
   });
-});
+}
 
 server.on("error", (error) => {
-  serverLogger.error(`API server failed to start on port ${port}: ${errorSummary(error)}`, {
+  serverLogger.error(`API server failed to start on ${host ?? "default host"}:${port}: ${errorSummary(error)}`, {
+    host,
     port,
     error
   });

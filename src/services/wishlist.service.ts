@@ -94,6 +94,57 @@ export async function toggleWishlist(userId: string, input: ToggleWishlistInput)
   };
 }
 
+export async function addToWishlist(userId: string, input: ToggleWishlistInput) {
+  const product = await prisma.product.findUnique({
+    where: { id: input.productId },
+    select: { id: true }
+  });
+
+  if (!product) {
+    throw new ApiError(404, "PRODUCT_NOT_FOUND", "Sản phẩm không tồn tại");
+  }
+
+  const existingItem = await prisma.wishlistItem.findUnique({
+    where: {
+      userId_productId: {
+        userId,
+        productId: input.productId
+      }
+    },
+    select: { id: true }
+  });
+
+  if (!existingItem) {
+    await prisma.wishlistItem.create({
+      data: {
+        userId,
+        productId: input.productId
+      }
+    });
+  }
+
+  return {
+    productId: input.productId,
+    action: "added" as const,
+    totalItems: await prisma.wishlistItem.count({ where: { userId } })
+  };
+}
+
+export async function removeFromWishlist(userId: string, productId: string) {
+  await prisma.wishlistItem.deleteMany({
+    where: {
+      userId,
+      productId
+    }
+  });
+
+  return {
+    productId,
+    action: "removed" as const,
+    totalItems: await prisma.wishlistItem.count({ where: { userId } })
+  };
+}
+
 export async function checkWishlist(userId: string, productId: string) {
   const item = await prisma.wishlistItem.findUnique({
     where: {

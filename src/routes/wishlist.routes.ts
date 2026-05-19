@@ -11,7 +11,9 @@ const wishlistRouter = Router();
 wishlistRouter.use(authenticate);
 
 wishlistRouter.get("/", asyncHandler(wishlistController.getWishlist));
+wishlistRouter.post("/", validate(toggleWishlistSchema), asyncHandler(wishlistController.addToWishlist));
 wishlistRouter.post("/toggle", validate(toggleWishlistSchema), asyncHandler(wishlistController.toggleWishlist));
 wishlistRouter.get("/check/:productId", asyncHandler(wishlistController.checkWishlist));
+wishlistRouter.delete("/:productId", asyncHandler(wishlistController.removeFromWishlist));
 
 export default wishlistRouter;
