@@ -1,26 +1,45 @@
-import { Prisma, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "../src/lib/prisma";
-import { slugify } from "../src/utils/slugify";
 
-// ── FEATURED PRODUCTS (12 AR-ready) ──
-// 1. sofa-bang-3-cho | 2. ghe-eames-replica | 3. den-dung-arc | 4. ban-ca-phe-tron
-// 5. ke-sach-5-tang | 6. ghe-van-phong-luoi | 7. ban-an-6-nguoi | 8. den-treo-tran-canh-quat
-// 9. tham-tron-len | 10. tu-dau-giuong | 11. ghe-banh-doc-sach | 12. ban-lam-viec-goc-chu-l
+// ── FEATURED PRODUCTS (14 AR-ready from products.json) ──
+// Additional seed products below bring the catalog to 58 products across 10 categories.
 
 const SEED_PASSWORD = "Password123!";
 const ADMIN_PASSWORD = "Admin@2024!";
 const SHIPPING_FEE = 50000;
 
-// Vietnamese collections
-const COLLECTIONS = [
-  "Bắc Âu Tối Giản",
-  "Nhiệt Đới Xanh",
-  "Công Nghiệp Hiện Đại",
-  "Cổ Điển Sang Trọng",
-  "Tối Giản Nhật Bản"
-];
+type SeedColor = {
+  name: string;
+  hex: string;
+  priceAddon: number;
+};
+
+type SeedMaterial = {
+  name: string;
+  priceAddon: number;
+};
+
+type SeedProduct = {
+  name: string;
+  slug: string;
+  category: string;
+  description: string;
+  basePrice: number;
+  comparePrice?: number;
+  dimensions: { width: number; height: number; depth: number; unit: "cm" | "mm" };
+  colors: SeedColor[];
+  materials: SeedMaterial[];
+  collection: string;
+  tags: string[];
+  stockQuantity: number;
+  arSupported: boolean;
+  modelUrl?: string | null;
+  images?: string[];
+  averageRating?: number;
+  totalReviews?: number;
+};
 
 // Real Unsplash photo IDs for furniture
 const UNSPLASH_PHOTOS = {
@@ -62,286 +81,377 @@ const UNSPLASH_PHOTOS = {
   ]
 };
 
+type UnsplashCategory = keyof typeof UNSPLASH_PHOTOS;
+
+const UNSPLASH_CATEGORY_ALIASES: Record<string, UnsplashCategory> = {
+  ghe: "chair",
+  ban: "table",
+  den: "lamp",
+  ke: "shelf",
+  tu: "shelf",
+  giuong: "sofa",
+  tham: "rug",
+  "ban-trang-diem": "table",
+  "trang-tri": "shelf"
+};
+
 function unsplashImage(category: string, index: number): string {
-  const photos = UNSPLASH_PHOTOS[category as keyof typeof UNSPLASH_PHOTOS] || UNSPLASH_PHOTOS.sofa;
+  const imageCategory = (category in UNSPLASH_PHOTOS ? category : UNSPLASH_CATEGORY_ALIASES[category]) as UnsplashCategory | undefined;
+  const photos = UNSPLASH_PHOTOS[imageCategory ?? "sofa"];
   const photoId = photos[index % photos.length];
   return `https://images.unsplash.com/${photoId}?w=800&q=80`;
 }
 
-// Featured products with full AR support
-const featuredProducts = [
+// Products rebuilt from /home/chicongn/Downloads/products.json.
+const featuredProducts: SeedProduct[] = [
   {
-    name: "Sofa Băng 3 Chỗ",
-    slug: "sofa-bang-3-cho",
+    name: "Sofa Nordic 3 chỗ",
+    slug: "sofa-nordic-3-cho",
     category: "sofa",
-    description: "Sofa băng 3 chỗ thiết kế hiện đại, đệm cao su non êm ái, vải linen cao cấp breathable. Phù hợp phòng khách rộng 15-20m².",
-    basePrice: 18500000,
-    dimensions: { width: 220, height: 85, depth: 95, unit: "cm" },
+    description: "Sofa Nordic 3 chỗ thuộc Scandinavian Collection, dáng gọn hiện đại với đệm rộng và bảng màu trung tính. Phù hợp phòng khách căn hộ hoặc nhà phố cần một điểm nhấn tối giản.",
+    basePrice: 12500000,
+    dimensions: { width: 230, depth: 90, height: 85, unit: "cm" },
     colors: [
-      { name: "Walnut Brown", hex: "#5C3D2E", priceAddon: 0 },
-      { name: "Slate Gray", hex: "#6B7280", priceAddon: 500000 },
-      { name: "Cream", hex: "#F5F0E8", priceAddon: 800000 },
-      { name: "Forest Green", hex: "#2D5016", priceAddon: 1200000 },
-      { name: "Navy Blue", hex: "#1B3A5C", priceAddon: 1500000 }
+      { name: "Be sáng", hex: "#c8c0a8", priceAddon: 0 },
+      { name: "Xám trầm", hex: "#6b6762", priceAddon: 350000 },
+      { name: "Nâu tối", hex: "#3d3330", priceAddon: 450000 },
+      { name: "Navy", hex: "#1f2937", priceAddon: 550000 }
     ],
     materials: [
-      { name: "Vải thường", priceAddon: 0 },
-      { name: "Vải nhung", priceAddon: 1500000 },
-      { name: "Da thật", priceAddon: 5000000 }
+      { name: "Vải lanh", priceAddon: 0 },
+      { name: "Da tổng hợp", priceAddon: 500000 },
+      { name: "Nhung cao cấp", priceAddon: 1200000 }
     ],
-    collection: "Bắc Âu Tối Giản",
-    tags: ["sofa", "sofa-3-cho", "bac-au", "phong-khach"],
-    stockQuantity: 15,
-    arSupported: true,
-    modelUrl: "/models/sofa-bang-3-cho.glb"
-  },
-  {
-    name: "Ghế Eames Replica",
-    slug: "ghe-eames-replica",
-    category: "ghe",
-    description: "Ghế Eames replica经典设计, chân gỗ sồi tự nhiên, đệm da PU cao cấp. Iconic mid-century modern cho phòng khách hoặc làm việc.",
-    basePrice: 4500000,
-    dimensions: { width: 65, height: 80, depth: 70, unit: "cm" },
-    colors: [
-      { name: "Black", hex: "#1A1A1A", priceAddon: 0 },
-      { name: "Walnut", hex: "#5C3D2E", priceAddon: 300000 },
-      { name: "White", hex: "#FFFFFF", priceAddon: 400000 }
-    ],
-    materials: [
-      { name: "Da PU", priceAddon: 0 },
-      { name: "Da thật", priceAddon: 3000000 }
-    ],
-    collection: "Cổ Điển Sang Trọng",
-    tags: ["ghe", "eames", "mid-century", "phong-khach"],
-    stockQuantity: 25,
-    arSupported: true,
-    modelUrl: "/models/ghe-eames-replica.glb"
-  },
-  {
-    name: "Đèn Đứng Arc",
-    slug: "den-dung-arc",
-    category: "den",
-    description: "Đèn đứng thiết kế arc độc đáo, thân thép không gỉ mạ chrome, chụp kim loại màu vàng đồng. Ánh sáng ấm E27 60W.",
-    basePrice: 3200000,
-    dimensions: { width: 45, height: 160, depth: 200, unit: "cm" },
-    colors: [
-      { name: "Chrome Gold", hex: "#D4AF37", priceAddon: 0 },
-      { name: "Black Matte", hex: "#2C2C2C", priceAddon: 200000 },
-      { name: "White Gloss", hex: "#FFFFFF", priceAddon: 300000 }
-    ],
-    materials: [
-      { name: "Kim loại", priceAddon: 0 },
-      { name: "Thép không gỉ", priceAddon: 800000 }
-    ],
-    collection: "Công Nghiệp Hiện Đại",
-    tags: ["den", "den-dung", "arc", "hien-dai"],
+    collection: "Scandinavian Collection",
+    tags: ["nordic", "minimalist", "living-room", "sofa"],
     stockQuantity: 18,
     arSupported: true,
-    modelUrl: "/models/den-dung-arc.glb"
+    modelUrl: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenWoodLeatherSofa/glTF-Binary/SheenWoodLeatherSofa.glb",
+    images: ["https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenWoodLeatherSofa/screenshot/screenshot.jpg"],
+    averageRating: 4.8,
+    totalReviews: 124
   },
   {
-    name: "Bàn Cà Phê Tròn",
-    slug: "ban-ca-phe-tron",
-    category: "ban",
-    description: "Bàn cà phê tròn mặt đá nhân tạo vân marble, khung gỗ sồi stabilized. Đường kính 80cm, cao 42cm, phù hợp mọi phòng khách.",
-    basePrice: 4200000,
-    dimensions: { width: 80, height: 42, depth: 80, unit: "cm" },
-    colors: [
-      { name: "White Marble", hex: "#F8F8F8", priceAddon: 0 },
-      { name: "Black Marble", hex: "#1C1C1C", priceAddon: 600000 },
-      { name: "Oak Wood", hex: "#D4A574", priceAddon: 400000 }
-    ],
-    materials: [
-      { name: "Đá nhân tạo", priceAddon: 0 },
-      { name: "Đá tự nhiên", priceAddon: 2000000 }
-    ],
-    collection: "Tối Giản Nhật Bản",
-    tags: ["ban", "ban-ca-phe", "tron", "marble"],
-    stockQuantity: 22,
-    arSupported: true,
-    modelUrl: "/models/ban-ca-phe-tron.glb"
-  },
-  {
-    name: "Kệ Sách 5 Tầng",
-    slug: "ke-sach-5-tang",
-    category: "ke",
-    description: "Kệ sách 5 tầng gỗ sồi trắng, thiết kế Bắc Âu minimal. Kích thước 100x185x36cm, chịu lực 30kg/tầng.",
-    basePrice: 5500000,
-    dimensions: { width: 100, height: 185, depth: 36, unit: "cm" },
-    colors: [
-      { name: "Natural Oak", hex: "#D4A574", priceAddon: 0 },
-      { name: "White Wash", hex: "#F5F5F0", priceAddon: 400000 },
-      { name: "Walnut", hex: "#5C3D2E", priceAddon: 600000 }
-    ],
-    materials: [
-      { name: "Gỗ sồi", priceAddon: 0 },
-      { name: "Gỗ thông", priceAddon: -500000 }
-    ],
-    collection: "Bắc Âu Tối Giản",
-    tags: ["ke", "ke-sach", "5-tang", "bac-au"],
-    stockQuantity: 12,
-    arSupported: true,
-    modelUrl: "/models/ke-sach-5-tang.glb"
-  },
-  {
-    name: "Ghế Văn Phòng Lưới",
-    slug: "ghe-van-phong-luoi",
+    name: "Ghế Eames Lounge",
+    slug: "ghe-eames-lounge",
     category: "ghe",
-    description: "Ghế văn phòng ergonomic lưới thoáng khí, tựa lưng điều chỉnh, đệm ngồi dày 8cm. Phù hợp làm việc 8-10 tiếng/ngày.",
-    basePrice: 3600000,
-    dimensions: { width: 66, height: 118, depth: 66, unit: "cm" },
+    description: "Ghế Eames Lounge lấy cảm hứng classic icon với lưng ngả thư giãn, đệm da mềm và dáng ngồi sâu. Sản phẩm hợp góc đọc sách, phòng khách hoặc phòng làm việc riêng.",
+    basePrice: 4200000,
+    dimensions: { width: 83, depth: 84, height: 85, unit: "cm" },
     colors: [
-      { name: "Black Mesh", hex: "#1C1C1C", priceAddon: 0 },
-      { name: "Gray Mesh", hex: "#6B7280", priceAddon: 300000 },
-      { name: "Blue Mesh", hex: "#1B3A5C", priceAddon: 400000 }
+      { name: "Be da", hex: "#c9a882", priceAddon: 0 },
+      { name: "Đen da", hex: "#1c1c1c", priceAddon: 350000 },
+      { name: "Cognac", hex: "#8b4513", priceAddon: 450000 }
     ],
     materials: [
-      { name: "Lưới polyester", priceAddon: 0 },
-      { name: "Lưới cao cấp", priceAddon: 800000 }
+      { name: "Da thật", priceAddon: 0 },
+      { name: "Da Italy cao cấp", priceAddon: 800000 }
     ],
-    collection: "Công Nghiệp Hiện Đại",
-    tags: ["ghe", "ghe-van-phong", "ergonomic", "lưới"],
-    stockQuantity: 30,
+    collection: "Classic Icons",
+    tags: ["classic", "leather", "lounge", "chair"],
+    stockQuantity: 24,
     arSupported: true,
-    modelUrl: "/models/ghe-van-phong-luoi.glb"
+    modelUrl: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/glTF-Binary/SheenChair.glb",
+    images: ["https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/screenshot/screenshot.jpg"],
+    averageRating: 4.9,
+    totalReviews: 89
   },
   {
-    name: "Bàn Ăn 6 Người",
-    slug: "ban-an-6-nguoi",
+    name: "Wooden Table Set",
+    slug: "wooden-table-set",
     category: "ban",
-    description: "Bàn ăn 6 người gỗ sồi tự nhiên, mặt dày 3cm, chân bo tròn. Kích thước 180x76x90cm, không gian 20-25m².",
-    basePrice: 15800000,
-    dimensions: { width: 180, height: 76, depth: 90, unit: "cm" },
+    description: "Bộ bàn gỗ Walnut Series với mặt rộng cho 6 người, vân gỗ nổi rõ và kết cấu chắc. Thiết kế phù hợp phòng ăn gia đình hoặc không gian bếp mở.",
+    basePrice: 8900000,
+    dimensions: { width: 180, depth: 90, height: 75, unit: "cm" },
     colors: [
-      { name: "Natural Oak", hex: "#D4A574", priceAddon: 0 },
-      { name: "Dark Walnut", hex: "#3D2914", priceAddon: 1200000 },
-      { name: "White Wash", hex: "#F5F5F0", priceAddon: 800000 }
+      { name: "Óc chó tự nhiên", hex: "#5c3d1e", priceAddon: 0 },
+      { name: "Óc chó đậm", hex: "#3b2409", priceAddon: 500000 }
     ],
     materials: [
-      { name: "Gỗ sồi Việt Nam", priceAddon: 0 },
-      { name: "Gỗ sồi Mỹ", priceAddon: 3000000 }
+      { name: "Gỗ nguyên khối", priceAddon: 0 },
+      { name: "Gỗ ghép dày", priceAddon: -500000 }
     ],
-    collection: "Tối Giản Nhật Bản",
-    tags: ["ban", "ban-an", "6-nguoi", "go-soi"],
-    stockQuantity: 8,
+    collection: "Walnut Series",
+    tags: ["wood", "dining", "natural", "table"],
+    stockQuantity: 10,
     arSupported: true,
-    modelUrl: "/models/ban-an-6-nguoi.glb"
+    modelUrl: "/models/wooden_table_set-1k.glb",
+    images: ["/models/wooden-table-set.png"],
+    averageRating: 4.7,
+    totalReviews: 56
   },
   {
-    name: "Đèn Treo Trần Cánh Quạt",
-    slug: "den-treo-tran-canh-quat",
-    category: "den",
-    description: "Đèn treo trần thiết kế cánh quạt độc đáo, kim loại mạ vàng đồng, 3 ánh sáng điều chỉnh. Đường kính 60cm, dây 1.2m.",
-    basePrice: 4800000,
-    dimensions: { width: 60, height: 120, depth: 60, unit: "cm" },
+    name: "Kệ sách Modular 5 tầng",
+    slug: "ke-sach-modular-5-tang",
+    category: "ke",
+    description: "Kệ sách Modular 5 tầng chia ô linh hoạt, phù hợp sách, hồ sơ và đồ trang trí. Kích thước cao nhưng gọn, dễ đặt ở phòng khách hoặc phòng làm việc.",
+    basePrice: 3600000,
+    dimensions: { width: 80, depth: 30, height: 180, unit: "cm" },
     colors: [
-      { name: "Brass Gold", hex: "#D4AF37", priceAddon: 0 },
-      { name: "Chrome Silver", hex: "#C0C0C0", priceAddon: 300000 },
-      { name: "Black Iron", hex: "#2C2C2C", priceAddon: 200000 }
+      { name: "Trắng sữa", hex: "#f5f0e8", priceAddon: 0 },
+      { name: "Đen mờ", hex: "#1a1a1a", priceAddon: 200000 },
+      { name: "Tần bì tự nhiên", hex: "#b5956a", priceAddon: 350000 }
+    ],
+    materials: [
+      { name: "MDF cao cấp", priceAddon: 0 },
+      { name: "Gỗ tần bì thật", priceAddon: 900000 }
+    ],
+    collection: "Modular Living",
+    tags: ["storage", "modular", "bookshelf", "shelf"],
+    stockQuantity: 20,
+    arSupported: true,
+    modelUrl: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Box/glTF-Binary/Box.glb",
+    images: ["/models/wooden-table-set.png"],
+    averageRating: 4.5,
+    totalReviews: 201
+  },
+  {
+    name: "Đèn sàn Arc Brass",
+    slug: "den-san-arc-brass",
+    category: "den",
+    description: "Đèn sàn Arc Brass có thân cong thanh mảnh, hoàn thiện kim loại ánh đồng và ánh sáng ấm. Phù hợp đặt cạnh sofa, bàn đọc sách hoặc góc lounge.",
+    basePrice: 2800000,
+    dimensions: { width: 35, depth: 35, height: 185, unit: "cm" },
+    colors: [
+      { name: "Vàng đồng", hex: "#b5860d", priceAddon: 0 },
+      { name: "Chrome", hex: "#aaaaaa", priceAddon: 250000 },
+      { name: "Đen mờ", hex: "#1a1a1a", priceAddon: 300000 }
     ],
     materials: [
       { name: "Kim loại mạ", priceAddon: 0 },
-      { name: "Đồng thau", priceAddon: 1000000 }
+      { name: "Đồng nguyên chất", priceAddon: 600000 }
     ],
-    collection: "Cổ Điển Sang Trọng",
-    tags: ["den", "den-treo", "canh-quat", "sang-trong"],
-    stockQuantity: 14,
+    collection: "Lighting Edit",
+    tags: ["lighting", "arc", "brass", "lamp"],
+    stockQuantity: 0,
     arSupported: true,
-    modelUrl: "/models/den-treo-tran-canh-quat.glb"
+    modelUrl: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/AnisotropyBarnLamp/glTF-Binary/AnisotropyBarnLamp.glb",
+    images: ["https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/AnisotropyBarnLamp/screenshot/screenshot.jpg"],
+    averageRating: 4.6,
+    totalReviews: 43
   },
   {
-    name: "Thảm Tròn Len",
-    slug: "tham-tron-len",
-    category: "tham",
-    description: "Thảm tròn dệt len thủ công, đường kính 150cm, đế cao su chống trượt. Màu trung tính, họa tiết geometric tinh tế.",
-    basePrice: 2200000,
-    dimensions: { width: 150, height: 2, depth: 150, unit: "cm" },
-    colors: [
-      { name: "Cream Gray", hex: "#E8E8E0", priceAddon: 0 },
-      { name: "Warm Beige", hex: "#D4C4A8", priceAddon: 200000 },
-      { name: "Soft Blue", hex: "#A8C8D8", priceAddon: 300000 }
-    ],
-    materials: [
-      { name: "Len dệt", priceAddon: 0 },
-      { name: "Len Merino", priceAddon: 800000 }
-    ],
-    collection: "Tối Giản Nhật Bản",
-    tags: ["tham", "tham-tron", "len", "geometric"],
-    stockQuantity: 20,
-    arSupported: true,
-    modelUrl: "/models/tham-tron-len.glb"
-  },
-  {
-    name: "Tủ Đầu Giường",
-    slug: "tu-dau-giuong",
-    category: "tu",
-    description: "Tủ đầu giường 2 ngăn kéo, chân gỗ cao, tay nắm âm. Kích thước 50x56x40cm, gỗ MDF phủ veneer sồi.",
-    basePrice: 2400000,
-    dimensions: { width: 50, height: 56, depth: 40, unit: "cm" },
-    colors: [
-      { name: "Oak Natural", hex: "#D4A574", priceAddon: 0 },
-      { name: "White Matte", hex: "#F5F5F0", priceAddon: 200000 },
-      { name: "Walnut", hex: "#5C3D2E", priceAddon: 400000 }
-    ],
-    materials: [
-      { name: "MDF veneer", priceAddon: 0 },
-      { name: "Gỗ sồi", priceAddon: 1500000 }
-    ],
-    collection: "Nhiệt Đới Xanh",
-    tags: ["tu", "tu-dau-giuong", "2-ngan-keo", "phong-ngu"],
-    stockQuantity: 28,
-    arSupported: true,
-    modelUrl: "/models/tu-dau-giuong.glb"
-  },
-  {
-    name: "Ghế Bành Đọc Sách",
-    slug: "ghe-banh-doc-sach",
+    name: "Ghế bành Wabi Sabi",
+    slug: "ghe-banh-wabi-sabi",
     category: "ghe",
-    description: "Ghế bành đọc sách bọc vải bouclé mềm, tay vịn rộng, đệm dày 12cm. Phù hợp góc đọc hoặc ban công.",
-    basePrice: 6200000,
-    dimensions: { width: 88, height: 86, depth: 92, unit: "cm" },
+    description: "Ghế bành Wabi Sabi có form thấp, màu dịu và chất liệu vải bông hữu cơ. Sản phẩm tạo cảm giác thư giãn cho phòng ngủ, ban công hoặc góc đọc sách.",
+    basePrice: 5400000,
+    dimensions: { width: 78, depth: 80, height: 76, unit: "cm" },
     colors: [
-      { name: "Cream Bouclé", hex: "#F5F0E8", priceAddon: 0 },
-      { name: "Gray Bouclé", hex: "#8B8680", priceAddon: 400000 },
-      { name: "Pink Blush", hex: "#E8D0D0", priceAddon: 500000 }
+      { name: "Xanh bạc hà", hex: "#8aaea6", priceAddon: 0 },
+      { name: "Cát sa mạc", hex: "#c8b89a", priceAddon: 300000 },
+      { name: "Đất sét", hex: "#a0735a", priceAddon: 350000 }
     ],
     materials: [
-      { name: "Vải bouclé", priceAddon: 0 },
-      { name: "Vải nhung", priceAddon: 1200000 },
-      { name: "Da PU", priceAddon: 1800000 }
+      { name: "Vải bông hữu cơ", priceAddon: 0 },
+      { name: "Tweed Nhật Bản", priceAddon: 700000 }
     ],
-    collection: "Bắc Âu Tối Giản",
-    tags: ["ghe", "ghe-banh", "doc-sach", "boucle"],
+    collection: "Japandi Series",
+    tags: ["japandi", "organic", "accent-chair"],
     stockQuantity: 16,
     arSupported: true,
-    modelUrl: "/models/ghe-banh-doc-sach.glb"
+    modelUrl: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SpecularSilkPouf/glTF-Binary/SpecularSilkPouf.glb",
+    images: ["https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SpecularSilkPouf/screenshot/screenshot.jpg"],
+    averageRating: 4.8,
+    totalReviews: 67
   },
   {
-    name: "Bàn Làm Việc Góc Chữ L",
-    slug: "ban-lam-viec-goc-chu-l",
-    category: "ban",
-    description: "Bàn làm việc góc chữ L lớn, mặt 120x160cm, khung thép sơn tĩnh điện đen. Có hộc CPU và khoang để dây.",
-    basePrice: 7800000,
-    dimensions: { width: 160, height: 75, depth: 120, unit: "cm" },
+    name: "Pouf tròn Silka",
+    slug: "pouf-tron-silka",
+    category: "ghe",
+    description: "Pouf tròn Silka là ghế đôn mềm dùng làm chỗ ngồi phụ, kê chân hoặc điểm nhấn lounge. Chất liệu lụa dệt và bouclé tạo bề mặt mềm, dễ phối nội thất.",
+    basePrice: 2190000,
+    dimensions: { width: 58, depth: 58, height: 42, unit: "cm" },
     colors: [
-      { name: "Black Frame", hex: "#1C1C1C", priceAddon: 0 },
-      { name: "White Frame", hex: "#FFFFFF", priceAddon: 300000 },
-      { name: "Oak Wood", hex: "#D4A574", priceAddon: 800000 }
+      { name: "Ivory", hex: "#e0d2bf", priceAddon: 0 },
+      { name: "Sage", hex: "#8f9d88", priceAddon: 250000 }
     ],
     materials: [
-      { name: "MFC chống ẩm", priceAddon: 0 },
-      { name: "Gỗ MDF veneer", priceAddon: 1500000 }
+      { name: "Lụa dệt", priceAddon: 0 },
+      { name: "Boucle mềm", priceAddon: 300000 }
     ],
-    collection: "Công Nghiệp Hiện Đại",
-    tags: ["ban", "ban-lam-viec", "goc-chu-l", "home-office"],
-    stockQuantity: 10,
+    collection: "Soft Forms",
+    tags: ["pouf", "ottoman", "lounge"],
+    stockQuantity: 28,
     arSupported: true,
-    modelUrl: "/models/ban-lam-viec-goc-chu-l.glb"
+    modelUrl: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SpecularSilkPouf/glTF-Binary/SpecularSilkPouf.glb",
+    images: ["https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SpecularSilkPouf/screenshot/screenshot.jpg"],
+    averageRating: 4.4,
+    totalReviews: 37
+  },
+  {
+    name: "Sofa Havn Leather",
+    slug: "sofa-havn-leather",
+    category: "sofa",
+    description: "Sofa Havn Leather thuộc Nordic Leather, bọc da cognac ấm và form ngồi rộng. Sản phẩm hợp phòng khách hiện đại cần chất liệu sang và bền.",
+    basePrice: 15600000,
+    dimensions: { width: 206, depth: 88, height: 78, unit: "cm" },
+    colors: [
+      { name: "Cognac", hex: "#9f6041", priceAddon: 0 },
+      { name: "Ink Black", hex: "#1f1c19", priceAddon: 700000 }
+    ],
+    materials: [
+      { name: "Da cognac", priceAddon: 0 },
+      { name: "Da full-grain", priceAddon: 1800000 }
+    ],
+    collection: "Nordic Leather",
+    tags: ["leather", "sofa", "premium"],
+    stockQuantity: 12,
+    arSupported: true,
+    modelUrl: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenWoodLeatherSofa/glTF-Binary/SheenWoodLeatherSofa.glb",
+    images: ["https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenWoodLeatherSofa/screenshot/screenshot.jpg"],
+    averageRating: 4.9,
+    totalReviews: 71
+  },
+  {
+    name: "Bàn trà Orbit Stone",
+    slug: "ban-tra-orbit-stone",
+    category: "ban",
+    description: "Bàn trà Orbit Stone có mặt tròn thấp, chất liệu đá nung hoặc marble Ý. Thiết kế Contemporary Forms hợp phòng khách hiện đại và dễ kết hợp sofa.",
+    basePrice: 4900000,
+    dimensions: { width: 90, depth: 90, height: 35, unit: "cm" },
+    colors: [
+      { name: "Travertine", hex: "#d8ccb8", priceAddon: 0 },
+      { name: "Đen basalt", hex: "#2a2a2a", priceAddon: 500000 }
+    ],
+    materials: [
+      { name: "Đá nung", priceAddon: 0 },
+      { name: "Đá marble Ý", priceAddon: 1200000 }
+    ],
+    collection: "Contemporary Forms",
+    tags: ["coffee-table", "stone", "living-room"],
+    stockQuantity: 18,
+    arSupported: true,
+    modelUrl: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/DragonAttenuation/glTF-Binary/DragonAttenuation.glb",
+    images: ["https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/DragonAttenuation/screenshot/screenshot.png"],
+    averageRating: 4.7,
+    totalReviews: 51
+  },
+  {
+    name: "Bàn làm việc Aero Oak",
+    slug: "ban-lam-viec-aero-oak",
+    category: "ban",
+    description: "Bàn làm việc Aero Oak có mặt rộng 140cm, tông gỗ sáng và tuỳ chọn khung thép đen. Phù hợp studio workspace, học tập hoặc làm việc tại nhà.",
+    basePrice: 7200000,
+    dimensions: { width: 140, depth: 70, height: 75, unit: "cm" },
+    colors: [
+      { name: "Oak sáng", hex: "#d6b58b", priceAddon: 0 },
+      { name: "Walnut", hex: "#6f4a2f", priceAddon: 450000 }
+    ],
+    materials: [
+      { name: "Gỗ sồi Mỹ", priceAddon: 0 },
+      { name: "Khung thép đen", priceAddon: 500000 }
+    ],
+    collection: "Studio Workspace",
+    tags: ["desk", "workspace", "oak"],
+    stockQuantity: 14,
+    arSupported: true,
+    modelUrl: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb",
+    images: ["https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/DamagedHelmet/screenshot/screenshot.jpg"],
+    averageRating: 4.6,
+    totalReviews: 84
+  },
+  {
+    name: "Ghế ăn Mono Curve",
+    slug: "ghe-an-mono-curve",
+    category: "ghe",
+    description: "Ghế ăn Mono Curve có lưng cong ôm nhẹ, form tối giản và bảng màu dễ phối. Sản phẩm dùng tốt cho bàn ăn gia đình, cafe nhỏ hoặc góc làm việc phụ.",
+    basePrice: 2650000,
+    dimensions: { width: 52, depth: 56, height: 82, unit: "cm" },
+    colors: [
+      { name: "Kem", hex: "#ece5da", priceAddon: 0 },
+      { name: "Xanh olive", hex: "#6f7b5c", priceAddon: 250000 },
+      { name: "Than chì", hex: "#3c3c3c", priceAddon: 300000 }
+    ],
+    materials: [
+      { name: "PP cao cấp", priceAddon: 0 },
+      { name: "Da microfiber", priceAddon: 450000 }
+    ],
+    collection: "Dining Essentials",
+    tags: ["dining-chair", "minimal", "chair"],
+    stockQuantity: 32,
+    arSupported: true,
+    modelUrl: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/glTF-Binary/SheenChair.glb",
+    images: ["https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/screenshot/screenshot.jpg"],
+    averageRating: 4.8,
+    totalReviews: 112
+  },
+  {
+    name: "Tủ TV Horizon",
+    slug: "tu-tv-horizon",
+    category: "ke",
+    description: "Tủ TV Horizon có dáng thấp, mặt dài 180cm và khoang lưu trữ cho thiết bị giải trí. Veneer gỗ tạo cảm giác ấm cho phòng khách.",
+    basePrice: 6100000,
+    dimensions: { width: 180, depth: 40, height: 48, unit: "cm" },
+    colors: [
+      { name: "Walnut", hex: "#6b4226", priceAddon: 0 },
+      { name: "Ash grey", hex: "#8a8f95", priceAddon: 350000 }
+    ],
+    materials: [
+      { name: "Gỗ veneer", priceAddon: 0 },
+      { name: "Gỗ óc chó thật", priceAddon: 1400000 }
+    ],
+    collection: "Living Core",
+    tags: ["tv-console", "storage", "living-room"],
+    stockQuantity: 16,
+    arSupported: true,
+    modelUrl: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/BoxTextured/glTF-Binary/BoxTextured.glb",
+    images: ["https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/BoxTextured/screenshot/screenshot.png"],
+    averageRating: 4.5,
+    totalReviews: 63
+  },
+  {
+    name: "Đèn thả Halo Pendant",
+    slug: "den-tha-halo-pendant",
+    category: "den",
+    description: "Đèn thả Halo Pendant có vòng sáng hiện đại, phù hợp bàn ăn, đảo bếp hoặc sảnh nhỏ. Thân nhôm anodized nhẹ và có tuỳ chọn đồng brushed.",
+    basePrice: 3400000,
+    dimensions: { width: 60, depth: 60, height: 120, unit: "cm" },
+    colors: [
+      { name: "Gold", hex: "#d4a017", priceAddon: 0 },
+      { name: "Matte Black", hex: "#1f1f1f", priceAddon: 250000 }
+    ],
+    materials: [
+      { name: "Nhôm anodized", priceAddon: 0 },
+      { name: "Đồng brushed", priceAddon: 700000 }
+    ],
+    collection: "Lighting Studio",
+    tags: ["pendant", "lighting", "modern"],
+    stockQuantity: 22,
+    arSupported: true,
+    modelUrl: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/AnisotropyBarnLamp/glTF-Binary/AnisotropyBarnLamp.glb",
+    images: ["https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/AnisotropyBarnLamp/screenshot/screenshot.jpg"],
+    averageRating: 4.7,
+    totalReviews: 38
+  },
+  {
+    name: "Giường ngủ Kyoto Platform",
+    slug: "giuong-ngu-kyoto-platform",
+    category: "giuong",
+    description: "Giường ngủ Kyoto Platform có khung thấp phong cách Japandi, tông gỗ tự nhiên và đầu giường mềm. Kích thước rộng cho phòng ngủ chính.",
+    basePrice: 13200000,
+    dimensions: { width: 220, depth: 180, height: 92, unit: "cm" },
+    colors: [
+      { name: "Natural Oak", hex: "#c9a87a", priceAddon: 0 },
+      { name: "Smoked Walnut", hex: "#5c4033", priceAddon: 600000 }
+    ],
+    materials: [
+      { name: "Gỗ sồi Nhật", priceAddon: 0 },
+      { name: "Headboard linen", priceAddon: 900000 }
+    ],
+    collection: "Japandi Rest",
+    tags: ["bed", "japandi", "bedroom"],
+    stockQuantity: 8,
+    arSupported: true,
+    modelUrl: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenWoodLeatherSofa/glTF-Binary/SheenWoodLeatherSofa.glb",
+    images: ["https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenWoodLeatherSofa/screenshot/screenshot.jpg"],
+    averageRating: 4.9,
+    totalReviews: 44
   }
 ];
 
 // Standard products (38+ products)
-const standardProducts = [
+const standardProducts: SeedProduct[] = [
   // SOFA category (6 products)
   {
     name: "Sofa Bed Luna 2 in 1",
@@ -615,7 +725,7 @@ const standardProducts = [
     arSupported: false
   },
   {
-    name: "Băn Ăn Đà Lạt 4 Chỗ",
+    name: "Bàn Ăn Đà Lạt 4 Chỗ",
     slug: "ban-an-da-lat-4-cho",
     category: "ban",
     description: "Bàn ăn 4 chỗ gỗ cao su ghép, mặt dày 2.5cm. Kích thước 120x75x80cm.",
@@ -1028,8 +1138,8 @@ const orderDefinitions = [
     createdAt: new Date("2025-04-01T10:00:00.000Z"),
     deliveredAt: new Date("2025-04-05T14:30:00.000Z"),
     items: [
-      { productSlug: "sofa-bang-3-cho", quantity: 1 },
-      { productSlug: "ban-ca-phe-tron", quantity: 1 }
+      { productSlug: "sofa-nordic-3-cho", quantity: 1 },
+      { productSlug: "ban-tra-orbit-stone", quantity: 1 }
     ]
   },
   {
@@ -1041,7 +1151,7 @@ const orderDefinitions = [
     createdAt: new Date("2025-04-15T09:00:00.000Z"),
     deliveredAt: new Date("2025-04-19T16:00:00.000Z"),
     items: [
-      { productSlug: "den-dung-arc", quantity: 1 }
+      { productSlug: "den-san-arc-brass", quantity: 1 }
     ]
   },
   {
@@ -1053,9 +1163,9 @@ const orderDefinitions = [
     createdAt: new Date("2025-04-25T11:30:00.000Z"),
     deliveredAt: new Date("2025-05-01T15:00:00.000Z"),
     items: [
-      { productSlug: "ghe-eames-replica", quantity: 2 },
-      { productSlug: "ban-lam-viec-goc-chu-l", quantity: 1 },
-      { productSlug: "tu-dau-giuong", quantity: 1 }
+      { productSlug: "ghe-eames-lounge", quantity: 2 },
+      { productSlug: "ban-lam-viec-aero-oak", quantity: 1 },
+      { productSlug: "tu-tv-horizon", quantity: 1 }
     ]
   },
   {
@@ -1067,7 +1177,7 @@ const orderDefinitions = [
     createdAt: new Date("2025-05-09T14:00:00.000Z"),
     deliveredAt: new Date("2025-05-14T17:30:00.000Z"),
     items: [
-      { productSlug: "ghe-van-phong-luoi", quantity: 1 }
+      { productSlug: "ghe-gaming-ergonomic", quantity: 1 }
     ]
   },
   // User 2 (Bích) - 3 DELIVERED orders
@@ -1080,8 +1190,8 @@ const orderDefinitions = [
     createdAt: new Date("2025-03-20T10:00:00.000Z"),
     deliveredAt: new Date("2025-03-25T14:00:00.000Z"),
     items: [
-      { productSlug: "ban-an-6-nguoi", quantity: 1 },
-      { productSlug: "ghe-eames-replica", quantity: 6 }
+      { productSlug: "wooden-table-set", quantity: 1 },
+      { productSlug: "ghe-an-mono-curve", quantity: 6 }
     ]
   },
   {
@@ -1093,8 +1203,8 @@ const orderDefinitions = [
     createdAt: new Date("2025-04-24T11:00:00.000Z"),
     deliveredAt: new Date("2025-04-29T16:30:00.000Z"),
     items: [
-      { productSlug: "den-treo-tran-canh-quat", quantity: 1 },
-      { productSlug: "tham-tron-len", quantity: 1 }
+      { productSlug: "den-tha-halo-pendant", quantity: 1 },
+      { productSlug: "tham-long-min-cloud", quantity: 1 }
     ]
   },
   {
@@ -1106,8 +1216,8 @@ const orderDefinitions = [
     createdAt: new Date("2025-05-04T15:30:00.000Z"),
     deliveredAt: new Date("2025-05-09T18:00:00.000Z"),
     items: [
-      { productSlug: "sofa-bang-3-cho", quantity: 1 },
-      { productSlug: "ke-sach-5-tang", quantity: 1 }
+      { productSlug: "sofa-havn-leather", quantity: 1 },
+      { productSlug: "ke-sach-modular-5-tang", quantity: 1 }
     ]
   },
   // User 3 (Đức) - 2 PENDING orders (no reviews)
@@ -1119,7 +1229,7 @@ const orderDefinitions = [
     paymentMethod: "MOCK" as const,
     createdAt: new Date("2025-05-17T10:00:00.000Z"),
     items: [
-      { productSlug: "ghe-banh-doc-sach", quantity: 1 }
+      { productSlug: "ghe-banh-wabi-sabi", quantity: 1 }
     ]
   },
   {
@@ -1167,11 +1277,39 @@ const reviewTemplates = {
     "Thảm mềm, không bị rụng lông. Màu sắc đẹp và trung tính.",
     "Thảm dày dặn, đế chống trượt tốt. Cảm giác đi chân rất êm.",
     "Chất liệu tốt, dễ giặt vệ sinh. Màu không bị phai sau thời gian sử dụng."
+  ],
+  bed: [
+    "Giường chắc chắn, nằm êm và kích thước đúng như mô tả. Lắp đặt gọn gàng.",
+    "Thiết kế thấp đẹp, màu gỗ dễ phối với phòng ngủ. Khung không bị rung.",
+    "Chất liệu hoàn thiện tốt, đầu giường êm và tạo cảm giác rất thoải mái."
+  ],
+  storage: [
+    "Tủ/kệ có khoang chứa rộng, hoàn thiện đẹp và đóng mở êm.",
+    "Sản phẩm chắc chắn, màu sắc giống hình. Rất hợp để tối ưu không gian lưu trữ.",
+    "Lắp đặt nhanh, bề mặt dễ lau chùi và không bị mùi vật liệu."
+  ],
+  decor: [
+    "Món decor đẹp, hoàn thiện tinh tế và làm không gian nổi bật hơn.",
+    "Kích thước vừa vặn, màu sắc trang nhã và dễ phối với nội thất hiện có.",
+    "Chất liệu tốt, đóng gói kỹ nên nhận hàng không bị trầy xước."
   ]
 };
 
+const reviewTemplateAliases: Record<string, keyof typeof reviewTemplates> = {
+  ghe: "chair",
+  ban: "table",
+  den: "lamp",
+  ke: "shelf",
+  tu: "storage",
+  giuong: "bed",
+  tham: "rug",
+  "ban-trang-diem": "table",
+  "trang-tri": "decor"
+};
+
 function getReviewTemplate(category: string): string[] {
-  return reviewTemplates[category as keyof typeof reviewTemplates] || reviewTemplates.sofa;
+  const templateKey = (category in reviewTemplates ? category : reviewTemplateAliases[category]) as keyof typeof reviewTemplates | undefined;
+  return reviewTemplates[templateKey ?? "sofa"];
 }
 
 async function clearExistingData(): Promise<void> {
@@ -1273,12 +1411,11 @@ async function createProducts(categoryMap: Map<string, string>): Promise<Map<str
       throw new Error(`Category not found: ${product.category}`);
     }
 
-    // Generate image URLs
+    // Prefer images from products.json; generate fallback photos for added products.
     const imageCount = product.arSupported ? 4 : 2;
-    const images: string[] = [];
-    for (let j = 0; j < imageCount; j++) {
-      images.push(unsplashImage(product.category, i + j));
-    }
+    const images = product.images?.length
+      ? product.images
+      : Array.from({ length: imageCount }, (_, j) => unsplashImage(product.category, i + j));
 
     // Create variants (colors + materials)
     const variants: any[] = [];
@@ -1313,7 +1450,7 @@ async function createProducts(categoryMap: Map<string, string>): Promise<Map<str
         description: product.description,
         categoryId,
         basePrice: product.basePrice,
-        comparePrice: product.basePrice + Math.floor(product.basePrice * 0.1),
+        comparePrice: product.comparePrice ?? product.basePrice + Math.floor(product.basePrice * 0.1),
         thumbnailUrl: images[0],
         modelUrl: product.modelUrl || null,
         hasArSupport: product.arSupported,
@@ -1321,6 +1458,8 @@ async function createProducts(categoryMap: Map<string, string>): Promise<Map<str
         materials: product.materials.map(m => m.name),
         tags: [...product.tags, product.collection],
         stockQuantity: product.stockQuantity,
+        averageRating: product.averageRating ?? 0,
+        totalReviews: product.totalReviews ?? 0,
         variants: {
           create: variants
         },
@@ -1536,5 +1675,5 @@ main()
   .catch(async (error) => {
     console.error("❌ Seed failed:", error);
     await prisma.$disconnect();
-    process.exit(1);
+    //process.exit(1);
   });
